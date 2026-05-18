@@ -1,13 +1,30 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import multer from 'multer';
 import { appendLead } from './storage.js';
 import { notifyTelegram } from './telegram.js';
 import { readSiteContent, writeSiteContent, requireAdmin } from './contentStorage.js';
+import { uploadMedia } from './mediaStorage.js';
 
 dotenv.config();
 
 const app = express();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 8 * 1024 * 1024
+  },
+  fileFilter(req, file, callback) {
+    if (!file.mimetype.startsWith('image/')) {
+      callback(new Error('Only image files are allowed'));
+      return;
+    }
+
+    callback(null, true);
+  }
+});
+
 const port = process.env.PORT || 4000;
 const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 const allowedOrigins = frontendOrigin.split(',').map((origin) => origin.trim()).filter(Boolean);
@@ -58,6 +75,23 @@ app.put('/api/content', async (req, res) => {
     res.status(error.statusCode || 400).json({
       ok: false,
       message: error.message || 'Content update failed'
+    });
+  }
+});
+
+app.post('/api/media', upload.single('file'), async (req, res) => {
+  try {
+    requireAdmin(req);
+    const media = await uploadMedia(req.file);
+
+    res.status(201).json({
+      ok: true,
+      media
+    });
+  } catch (error) {
+    res.status(error.statusCode || 400).json({
+      ok: false,
+      message: error.message || 'Media upload failed'
     });
   }
 });
