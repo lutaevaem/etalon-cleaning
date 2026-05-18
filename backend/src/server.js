@@ -3,21 +3,63 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { appendLead } from './storage.js';
 import { notifyTelegram } from './telegram.js';
+import { readSiteContent, writeSiteContent, requireAdmin } from './contentStorage.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 4000;
 const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+const allowedOrigins = frontendOrigin.split(',').map((origin) => origin.trim()).filter(Boolean);
 
-app.use(cors({ origin: frontendOrigin }));
-app.use(express.json({ limit: '256kb' }));
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  }
+}));
+app.use(express.json({ limit: '2mb' }));
 
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     service: 'etalon-cleaning-backend'
   });
+});
+
+app.get('/api/content', async (req, res) => {
+  const content = await readSiteContent();
+  res.json({
+    ok: true,
+    content
+  });
+});
+
+app.put('/api/content', async (req, res) => {
+  try {
+    requireAdmin(req);
+    const content = req.body?.content;
+
+    if (!content || typeof content !== 'object') {
+      throw new Error('Content payload is required');
+    }
+
+    const savedContent = await writeSiteContent(content);
+
+    res.json({
+      ok: true,
+      content: savedContent
+    });
+  } catch (error) {
+    res.status(error.statusCode || 400).json({
+      ok: false,
+      message: error.message || 'Content update failed'
+    });
+  }
 });
 
 app.post('/api/leads', async (req, res) => {
