@@ -8,18 +8,76 @@ export function getGithubConfig() {
   };
 }
 
-export function requireAdmin(req) {
-  const token = process.env.ADMIN_TOKEN;
-  const header = req.headers.authorization || '';
-  const requestToken = header.replace(/^Bearer\s+/i, '').trim();
+function decodeBasicAuth(header = '') {
+  if (!header.toLowerCase().startsWith('basic ')) {
+    return null;
+  }
 
-  if (!token) {
-    const error = new Error('ADMIN_TOKEN is not configured in Vercel');
+  const encoded = header.replace(/^Basic\s+/i, '').trim();
+  const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
+  const separatorIndex = decoded.indexOf(':');
+
+  if (separatorIndex === -1) {
+    return null;
+  }
+
+  return {
+    username: decoded.slice(0, separatorIndex),
+    password: decoded.slice(separatorIndex + 1)
+  };
+}
+
+function decodeBearerCredentials(header = '') {
+  if (!header.toLowerCase().startsWith('bearer ')) {
+    return null;
+  }
+
+  const value = header.replace(/^Bearer\s+/i, '').trim();
+
+  try {
+    const decoded = Buffer.from(value, 'base64').toString('utf-8');
+    const separatorIndex = decoded.indexOf(':');
+
+    if (separatorIndex === -1) {
+      return null;
+    }
+
+    return {
+      username: decoded.slice(0, separatorIndex),
+      password: decoded.slice(separatorIndex + 1)
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
+export function requireAdmin(req) {
+  const username = process.env.ADMIN_USERNAME;
+  const password = process.env.ADMIN_PASSWORD;
+  const legacyToken = process.env.ADMIN_TOKEN;
+  const header = req.headers.authorization || '';
+
+  if (username && password) {
+    const credentials = decodeBasicAuth(header) || decodeBearerCredentials(header);
+
+    if (credentials?.username === username && credentials?.password === password) {
+      return;
+    }
+
+    const error = new Error('Неверный логин или пароль');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  if (!legacyToken) {
+    const error = new Error('ADMIN_USERNAME and ADMIN_PASSWORD are not configured in Vercel');
     error.statusCode = 500;
     throw error;
   }
 
-  if (!requestToken || requestToken !== token) {
+  const requestToken = header.replace(/^Bearer\s+/i, '').trim();
+
+  if (!requestToken || requestToken !== legacyToken) {
     const error = new Error('Unauthorized');
     error.statusCode = 401;
     throw error;
