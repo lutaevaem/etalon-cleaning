@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { defaultContent } from './defaultContent.js';
+import AdminLeads from './AdminLeads.jsx';
 import './admin.css';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
 const nav = [
   ['dashboard', 'Обзор'],
+  ['leads', 'Лиды'],
   ['hero', 'Первый экран'],
   ['services', 'Услуги'],
   ['formats', 'Форматы'],
@@ -271,8 +273,12 @@ export default function Admin2() {
   }
 
   function renderSection() {
+    if (active === 'leads') {
+      return <AdminLeads auth={auth} />;
+    }
+
     if (active === 'dashboard') {
-      return <Section title="Обзор" description="Админка управляет текстами, карточками, отзывами, FAQ и изображениями. Фото загружаются в GitHub, а в карточке видно, где они используются."><div className="dashboard-grid"><div className="metric-card"><span>Статус</span><b>{isDirty ? 'Есть правки' : 'Без правок'}</b><p>{status}</p></div><div className="metric-card"><span>Сохранение</span><b>{updatedAt}</b><p>Контент хранится в content/site-content.json</p></div><div className="metric-card"><span>Фото</span><b>GitHub uploads</b><p>Папка: frontend/public/uploads</p></div></div></Section>;
+      return <Section title="Обзор" description="Админка управляет текстами, карточками, отзывами, FAQ, изображениями и лидами с формы сайта."><div className="dashboard-grid"><div className="metric-card"><span>Статус</span><b>{isDirty ? 'Есть правки' : 'Без правок'}</b><p>{status}</p></div><div className="metric-card"><span>Сохранение</span><b>{updatedAt}</b><p>Контент хранится в content/site-content.json</p></div><div className="metric-card"><span>Лиды</span><b>В личном кабинете</b><p>Раздел «Лиды» показывает заявки с формы.</p></div></div></Section>;
     }
 
     if (active === 'hero') {
@@ -292,7 +298,7 @@ export default function Admin2() {
     }
 
     if (active === 'process') {
-      return <Section title="Этапы" description="Как начинается работа с клиентом."><div className="admin-grid"><Field label="Надзаголовок" value={content.process.eyebrow} onChange={(value) => update('process.eyebrow', value)} /><Field label="Заголовок" value={content.process.title} onChange={(value) => update('process.title', value)} multiline /></div><ItemsEditor title="Этапы" items={content.process.items} onChange={(items) => update('process.items', items)} emptyItem={{ title: 'Новый этап', text: 'Описание' }} render={(item, setItem) => <div className="admin-grid"><Field label="Название" value={item.title} onChange={(value) => setItem({ ...item, title: value })} /><Field label="Описание" value={item.text} onChange={(value) => setItem({ ...item, text: value })} multiline /></div>} /></Section>;
+      return <Section title="Этапы" description="Как начинается работа с клиентом."><div className="admin-grid"><Field label="Надзаголовок" value={content.process.eyebrow} onChange={(value) => update('process.eyebrow', value)} /><Field label="Заголовок" value={content.process.title} onChange={(value) => update('process.title', value)} multiline /></div><ItemsEditor title="Этапы" items={content.process.items} onChange={(items) => update('process.items', items)} emptyItem={{ title: 'Новый этап', text: 'Описание этапа' }} render={(item, setItem) => <div className="admin-grid"><Field label="Название" value={item.title} onChange={(value) => setItem({ ...item, title: value })} /><Field label="Описание" value={item.text} onChange={(value) => setItem({ ...item, text: value })} multiline /></div>} /></Section>;
     }
 
     if (active === 'media') {
@@ -321,12 +327,12 @@ export default function Admin2() {
       <aside className="admin-sidebar">
         <div className="sidebar-brand"><span /> <strong>{content.brand}</strong></div>
         <nav className="sidebar-nav">
-          {nav.map(([id, label]) => <button type="button" className={active === id ? 'active' : ''} onClick={() => setActive(id)} key={id}><b>{label}</b><small>Редактировать</small></button>)}
+          {nav.map(([id, label]) => <button type="button" className={active === id ? 'active' : ''} onClick={() => setActive(id)} key={id}><b>{label}</b><small>{id === 'leads' ? 'Заявки' : 'Редактировать'}</small></button>)}
         </nav>
       </aside>
       <section className="admin-workspace">
         <header className="workspace-header">
-          <div><p className="admin-eyebrow">Админка сайта</p><h1>Редактор контента «{content.brand}»</h1><p>Тексты, блоки, карточки и изображения. Фото загружаются в GitHub, а место использования видно в карточке.</p></div>
+          <div><p className="admin-eyebrow">Админка сайта</p><h1>Редактор контента «{content.brand}»</h1><p>Тексты, блоки, карточки, изображения и лиды с формы сайта.</p></div>
           <div className="header-actions"><a className="admin-link" href="/" target="_blank" rel="noreferrer">Открыть сайт</a><button type="button" className="secondary" onClick={logout}>Выйти</button><button type="button" onClick={saveContent}>Сохранить</button></div>
         </header>
         <section className="admin-toolbar premium"><div className="toolbar-card"><span>Вход</span><b>Выполнен</b></div><div className="toolbar-card"><span>Состояние</span><b>{isDirty ? 'Есть правки' : 'Без правок'}</b></div><div className="toolbar-card"><span>Сохранение</span><b>{updatedAt}</b></div><button type="button" className="secondary" onClick={loadContent}>Обновить</button></section>
