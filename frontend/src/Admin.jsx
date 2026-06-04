@@ -59,17 +59,48 @@ function mergeContent(remoteContent) {
   };
 }
 
-function TextInput({ label, value, onChange, multiline = false, placeholder = '', note = '' }) {
+function encodeCredentials(username, password) {
+  return btoa(`${username}:${password}`);
+}
+
+function TextInput({ label, value, onChange, multiline = false, placeholder = '', note = '', type = 'text' }) {
   return (
     <label className="admin-field">
       <span>{label}</span>
       {multiline ? (
         <textarea value={value || ''} placeholder={placeholder} rows="4" onChange={(event) => onChange(event.target.value)} />
       ) : (
-        <input value={value || ''} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
+        <input type={type} value={value || ''} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
       )}
       {note && <small>{note}</small>}
     </label>
+  );
+}
+
+function LoginScreen({ onLogin, status }) {
+  const [username, setUsername] = useState(localStorage.getItem('adminUsername') || '');
+  const [password, setPassword] = useState('');
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    onLogin(username.trim(), password);
+  }
+
+  return (
+    <main className="admin-login-page">
+      <section className="admin-login-card">
+        <div className="sidebar-brand login-brand"><span /> <strong>Эталон</strong></div>
+        <p className="admin-eyebrow">Админка сайта</p>
+        <h1>Вход в редактор</h1>
+        <p>Введите логин и пароль администратора, чтобы редактировать тексты, блоки, отзывы, FAQ и изображения сайта.</p>
+        <form className="admin-login-form" onSubmit={handleSubmit}>
+          <TextInput label="Логин" value={username} onChange={setUsername} placeholder="admin" />
+          <TextInput label="Пароль" value={password} onChange={setPassword} placeholder="••••••••" type="password" />
+          <button type="submit">Войти в админку</button>
+        </form>
+        {status && <div className={`admin-status ${status.startsWith('Ошибка') || status.includes('Неверный') ? 'error' : ''}`}>{status}</div>}
+      </section>
+    </main>
   );
 }
 
@@ -168,7 +199,10 @@ function PreviewCard({ content }) {
 
 export default function Admin() {
   const [activeSection, setActiveSection] = useState('dashboard');
-  const [token, setToken] = useState(localStorage.getItem('adminToken') || '');
+  const [auth, setAuth] = useState(() => {
+    const saved = localStorage.getItem('adminAuth');
+    return saved || '';
+  });
   const [content, setContent] = useState(clone(defaultContent));
   const [status, setStatus] = useState('');
   const [jsonDraft, setJsonDraft] = useState('');
@@ -176,26 +210,40 @@ export default function Admin() {
 
   const updatedAt = useMemo(() => content?.updatedAt ? new Date(content.updatedAt).toLocaleString('ru-RU') : 'ещё не сохранялось', [content]);
 
-  useEffect(() => {
-    async function loadContent() {
-      try {
-        const response = await fetch(`${API_URL}/api/content`);
-        const data = await response.json();
-        const merged = mergeContent(data.content);
-        setContent(merged);
-        setJsonDraft(JSON.stringify(merged, null, 2));
-        setStatus(data.content ? 'Контент загружен с сервера.' : 'На сервере пока нет сохранённого контента. Открыт базовый вариант.');
-      } catch (error) {
-        setStatus('Не удалось загрузить контент. Проверьте переменные Vercel.');
-      }
+  async function loadContent() {
+    try {
+      const response = await fetch(`${API_URL}/api/content`);
+      const data = await response.json();
+      const merged = mergeContent(data.content);
+      setContent(merged);
+      setJsonDraft(JSON.stringify(merged, null, 2));
+      setStatus(data.content ? 'Контент загружен с сервера.' : 'На сервере пока нет сохранённого контента. Открыт базовый вариант.');
+    } catch (error) {
+      setStatus('Не удалось загрузить контент. Проверьте переменные Vercel.');
     }
+  }
 
-    loadContent();
-  }, []);
+  useEffect(() => {
+    if (auth) loadContent();
+  }, [auth]);
 
   useEffect(() => {
     setJsonDraft(JSON.stringify(content, null, 2));
   }, [content]);
+
+  function handleLogin(username, password) {
+    const encoded = encodeCredentials(username, password);
+    localStorage.setItem('adminUsername', username);
+    localStorage.setItem('adminAuth', encoded);
+    setAuth(encoded);
+    setStatus('Вход выполнен.');
+  }
+
+  function logout() {
+    localStorage.removeItem('adminAuth');
+    setAuth('');
+    setStatus('');
+  }
 
   function update(path, value) {
     setIsDirty(true);
@@ -209,11 +257,10 @@ export default function Admin() {
 
   async function saveContent() {
     try {
-      localStorage.setItem('adminToken', token);
       setStatus('Сохраняем изменения...');
       const response = await fetch(`${API_URL}/api/content`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Basic ${auth}` },
         body: JSON.stringify({ content })
       });
       const data = await response.json();
@@ -224,6 +271,9 @@ export default function Admin() {
       setStatus('Готово. Изменения сохранены. Обновите сайт через Ctrl+F5.');
     } catch (error) {
       setStatus(`Ошибка: ${error.message}`);
+      if (String(error.message).includes('Неверный') || String(error.message).includes('Unauthorized')) {
+        logout();
+      }
     }
   }
 
@@ -358,6 +408,10 @@ export default function Admin() {
     );
   }
 
+  if (!auth) {
+    return <LoginScreen onLogin={handleLogin} status={status} />;
+  }
+
   return (
     <main className="admin-shell">
       <aside className="admin-sidebar">
@@ -374,11 +428,11 @@ export default function Admin() {
       <section className="admin-workspace">
         <header className="workspace-header">
           <div><p className="admin-eyebrow">Админка сайта</p><h1>Редактор контента «{content.brand}»</h1><p>Структурная админка для управления продающей страницей: тексты, блоки, карточки, отзывы, FAQ и изображения.</p></div>
-          <div className="header-actions"><a className="admin-link" href="/" target="_blank" rel="noreferrer">Открыть сайт</a><button type="button" onClick={saveContent}>Сохранить</button></div>
+          <div className="header-actions"><a className="admin-link" href="/" target="_blank" rel="noreferrer">Открыть сайт</a><button type="button" className="secondary" onClick={logout}>Выйти</button><button type="button" onClick={saveContent}>Сохранить</button></div>
         </header>
 
         <section className="admin-toolbar premium">
-          <TextInput label="Admin token" value={token} onChange={setToken} placeholder="Вставьте ADMIN_TOKEN из Vercel" />
+          <div className="toolbar-card"><span>Авторизация</span><b>Вход выполнен</b></div>
           <div className="toolbar-card"><span>Состояние</span><b>{isDirty ? 'Есть правки' : 'Без правок'}</b></div>
           <div className="toolbar-card"><span>Сохранение</span><b>{updatedAt}</b></div>
           <button type="button" className="secondary" onClick={() => replaceContent(clone(defaultContent))}>Сбросить</button>
