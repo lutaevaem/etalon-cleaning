@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { defaultContent } from './defaultContent.js';
 import './admin.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 const sections = [
   { id: 'dashboard', label: 'Обзор', hint: 'Статус и быстрые действия' },
@@ -186,7 +186,7 @@ export default function Admin() {
         setJsonDraft(JSON.stringify(merged, null, 2));
         setStatus(data.content ? 'Контент загружен с сервера.' : 'На сервере пока нет сохранённого контента. Открыт базовый вариант.');
       } catch (error) {
-        setStatus('Не удалось загрузить контент с backend. Проверьте Render и VITE_API_URL.');
+        setStatus('Не удалось загрузить контент. Проверьте переменные Vercel.');
       }
     }
 
@@ -240,15 +240,11 @@ export default function Admin() {
   function renderActiveSection() {
     if (activeSection === 'dashboard') {
       return (
-        <EditorSection title="Панель управления сайтом" description="Теперь это не список полей, а рабочий редактор по логике сайта: оффер, услуги, доверие, медиа, отзывы и FAQ.">
+        <EditorSection title="Панель управления сайтом" description="Рабочий редактор по логике сайта: оффер, услуги, доверие, медиа, отзывы и FAQ.">
           <div className="dashboard-grid">
             <div className="metric-card"><span>Статус</span><b>{isDirty ? 'Есть несохранённые правки' : 'Сохранено'}</b><p>{status}</p></div>
-            <div className="metric-card"><span>Последнее сохранение</span><b>{updatedAt}</b><p>Контент хранится на backend Render.</p></div>
+            <div className="metric-card"><span>Последнее сохранение</span><b>{updatedAt}</b><p>Контент сохраняется в GitHub.</p></div>
             <div className="metric-card"><span>Структура</span><b>{sections.length - 1} разделов</b><p>Редактируются ключевые блоки лендинга.</p></div>
-          </div>
-          <div className="admin-note">
-            <h3>Что усилено по логике сайта под строительство/ремонт</h3>
-            <p>Админка теперь повторяет структуру продающей страницы: сначала оффер и позиционирование, дальше аудитория, услуги, форматы, доверие, процесс, медиа, отзывы и FAQ. Можно быстро менять не только текст, но и порядок карточек, подписи, изображения и контактные ссылки.</p>
           </div>
         </EditorSection>
       );
@@ -382,7 +378,7 @@ export default function Admin() {
         </header>
 
         <section className="admin-toolbar premium">
-          <TextInput label="Admin token" value={token} onChange={setToken} placeholder="Вставьте ADMIN_TOKEN из Render" />
+          <TextInput label="Admin token" value={token} onChange={setToken} placeholder="Вставьте ADMIN_TOKEN из Vercel" />
           <div className="toolbar-card"><span>Состояние</span><b>{isDirty ? 'Есть правки' : 'Без правок'}</b></div>
           <div className="toolbar-card"><span>Сохранение</span><b>{updatedAt}</b></div>
           <button type="button" className="secondary" onClick={() => replaceContent(clone(defaultContent))}>Сбросить</button>
