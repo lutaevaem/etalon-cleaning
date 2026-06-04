@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 import App from './App.jsx';
-import Admin from './Admin.jsx';
+import Admin from './Admin2.jsx';
 
 const isAdminPage = window.location.pathname.startsWith('/admin');
 
