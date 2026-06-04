@@ -182,6 +182,35 @@ export async function writeGithubJson(filePath, data, message) {
   return data;
 }
 
+export async function writeGithubFile(filePath, buffer, message) {
+  const { repo, branch } = getGithubConfig();
+  const existingFile = await getFile(filePath);
+  const url = `${GITHUB_API_URL}/repos/${repo}/contents/${encodePath(filePath)}`;
+
+  const payload = {
+    message,
+    branch,
+    content: Buffer.from(buffer).toString('base64')
+  };
+
+  if (existingFile?.sha) {
+    payload.sha = existingFile.sha;
+  }
+
+  await requestGithub(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  return {
+    path: filePath,
+    url: `https://raw.githubusercontent.com/${repo}/${branch}/${filePath}`
+  };
+}
+
 export function sendJson(res, statusCode, data) {
   res.status(statusCode).json(data);
 }
