@@ -1,6 +1,6 @@
 import path from 'path';
 import crypto from 'crypto';
-import { getSupabaseClient, MEDIA_BUCKET } from './supabaseClient.js';
+import { writeGithubFile, isGithubStorageConfigured } from './githubStorage.js';
 
 function safeExt(originalName = '') {
   const ext = path.extname(originalName).toLowerCase();
@@ -8,10 +8,8 @@ function safeExt(originalName = '') {
 }
 
 export async function uploadMedia(file) {
-  const supabase = getSupabaseClient();
-
-  if (!supabase) {
-    throw new Error('Supabase is not configured');
+  if (!isGithubStorageConfigured()) {
+    throw new Error('GitHub storage is not configured');
   }
 
   if (!file) {
@@ -20,26 +18,12 @@ export async function uploadMedia(file) {
 
   const ext = safeExt(file.originalname);
   const filename = `${Date.now()}-${crypto.randomUUID()}${ext}`;
-  const storagePath = `uploads/${filename}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(MEDIA_BUCKET)
-    .upload(storagePath, file.buffer, {
-      contentType: file.mimetype,
-      upsert: false
-    });
-
-  if (uploadError) {
-    throw new Error(`Supabase media upload failed: ${uploadError.message}`);
-  }
-
-  const { data } = supabase.storage
-    .from(MEDIA_BUCKET)
-    .getPublicUrl(storagePath);
+  const mediaPath = `${process.env.GITHUB_MEDIA_PATH || 'frontend/public/uploads'}/${filename}`;
+  const result = await writeGithubFile(mediaPath, file.buffer, 'Upload media from admin');
 
   return {
-    path: storagePath,
-    url: data.publicUrl,
+    path: result.path,
+    url: result.url,
     filename: file.originalname,
     mimetype: file.mimetype,
     size: file.size
