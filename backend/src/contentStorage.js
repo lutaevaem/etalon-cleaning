@@ -1,34 +1,19 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getSupabaseClient, SITE_CONTENT_KEY } from './supabaseClient.js';
+import { readGithubJson, writeGithubJson, isGithubStorageConfigured } from './githubStorage.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const dataDir = path.resolve(__dirname, '../data');
 const contentFile = path.join(dataDir, 'site-content.json');
+const githubContentPath = process.env.GITHUB_CONTENT_PATH || 'content/site-content.json';
 
 export async function readSiteContent() {
-  const supabase = getSupabaseClient();
-
-  if (supabase) {
-    const { data, error } = await supabase
-      .from('site_content')
-      .select('content, updated_at')
-      .eq('key', SITE_CONTENT_KEY)
-      .maybeSingle();
-
-    if (error) {
-      console.warn('Supabase content read failed:', error.message);
-    }
-
-    if (data?.content) {
-      return {
-        ...data.content,
-        updatedAt: data.updated_at
-      };
-    }
+  if (isGithubStorageConfigured()) {
+    const content = await readGithubJson(githubContentPath);
+    if (content) return content;
   }
 
   try {
@@ -45,27 +30,9 @@ export async function writeSiteContent(content) {
     updatedAt: new Date().toISOString()
   };
 
-  const supabase = getSupabaseClient();
-
-  if (supabase) {
-    const { data, error } = await supabase
-      .from('site_content')
-      .upsert({
-        key: SITE_CONTENT_KEY,
-        content: savedContent,
-        updated_at: savedContent.updatedAt
-      }, { onConflict: 'key' })
-      .select('content, updated_at')
-      .single();
-
-    if (error) {
-      throw new Error(`Supabase content save failed: ${error.message}`);
-    }
-
-    return {
-      ...data.content,
-      updatedAt: data.updated_at
-    };
+  if (isGithubStorageConfigured()) {
+    await writeGithubJson(githubContentPath, savedContent, 'Update site content from admin');
+    return savedContent;
   }
 
   await fs.mkdir(dataDir, { recursive: true });
