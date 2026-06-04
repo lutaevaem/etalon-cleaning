@@ -33,12 +33,55 @@ function leadSummary(lead) {
   return [lead.object, lead.area, lead.frequency].filter(Boolean).join(' • ') || 'Без деталей';
 }
 
+function normalizePhone(value = '') {
+  return String(value).replace(/[^+\d]/g, '');
+}
+
+function normalizeDigits(value = '') {
+  return String(value).replace(/[^\d]/g, '');
+}
+
+function telegramHref(value = '') {
+  const contact = String(value).trim();
+
+  if (!contact) return 'https://t.me/';
+  if (contact.includes('t.me/')) return contact.startsWith('http') ? contact : `https://${contact}`;
+  if (contact.startsWith('@')) return `https://t.me/${contact.slice(1)}`;
+
+  const usernameCandidate = contact.replace(/[^a-zA-Z0-9_]/g, '');
+  const onlyDigits = normalizeDigits(contact);
+
+  if (usernameCandidate && !onlyDigits && usernameCandidate.length >= 5) {
+    return `https://t.me/${usernameCandidate}`;
+  }
+
+  return `tg://resolve?phone=${onlyDigits}`;
+}
+
+function createLeadDraft(lead) {
+  return {
+    status: lead.status || 'new',
+    nextContactAt: lead.nextContactAt || '',
+    managerComment: lead.managerComment || ''
+  };
+}
+
 export default function AdminLeads({ auth }) {
   const [leads, setLeads] = useState([]);
+  const [drafts, setDrafts] = useState({});
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [savingId, setSavingId] = useState('');
+
+  function syncDrafts(nextLeads) {
+    const nextDrafts = {};
+    nextLeads.forEach((lead) => {
+      nextDrafts[lead.id] = createLeadDraft(lead);
+    });
+    setDrafts(nextDrafts);
+  }
 
   async function loadLeads() {
     try {
@@ -49,8 +92,10 @@ export default function AdminLeads({ auth }) {
       });
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || 'Не удалось загрузить лиды');
-      setLeads(data.leads || []);
-      setMessage(data.leads?.length ? `Загружено лидов: ${data.leads.length}` : 'Лидов пока нет.');
+      const nextLeads = data.leads || [];
+      setLeads(nextLeads);
+      syncDrafts(nextLeads);
+      setMessage(nextLeads.length ? `Загружено лидов: ${nextLeads.length}` : 'Лидов пока нет.');
     } catch (error) {
       setMessage(`Ошибка: ${error.message}`);
     } finally {
@@ -58,27 +103,47 @@ export default function AdminLeads({ auth }) {
     }
   }
 
-  async function updateLead(id, patch) {
-    const previousLeads = leads;
-    const nextLeads = leads.map((lead) => lead.id === id ? { ...lead, ...patch, updatedAt: new Date().toISOString() } : lead);
-    setLeads(nextLeads);
+  function updateDraft(id, patch) {
+    setDrafts((current) => ({
+      ...current,
+      [id]: {
+        ...(current[id] || {}),
+        ...patch
+      }
+    }));
+  }
+
+  function isDraftChanged(lead) {
+    const draft = drafts[lead.id] || createLeadDraft(lead);
+    return draft.status !== (lead.status || 'new')
+      || draft.nextContactAt !== (lead.nextContactAt || '')
+      || draft.managerComment !== (lead.managerComment || '');
+  }
+
+  async function saveLead(lead) {
+    const draft = drafts[lead.id] || createLeadDraft(lead);
 
     try {
+      setSavingId(lead.id);
+      setMessage('Сохраняем изменения по лиду...');
       const response = await fetch(`${API_URL}/api/leads`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Basic ${auth}`
         },
-        body: JSON.stringify({ id, ...patch })
+        body: JSON.stringify({ id: lead.id, ...draft })
       });
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || 'Не удалось сохранить лид');
-      setLeads(data.leads || nextLeads);
-      setMessage('Лид обновлён.');
+      const nextLeads = data.leads || leads.map((item) => item.id === lead.id ? { ...item, ...draft } : item);
+      setLeads(nextLeads);
+      syncDrafts(nextLeads);
+      setMessage('Лид сохранён.');
     } catch (error) {
-      setLeads(previousLeads);
       setMessage(`Ошибка: ${error.message}`);
+    } finally {
+      setSavingId('');
     }
   }
 
@@ -101,10 +166,13 @@ export default function AdminLeads({ auth }) {
       });
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || 'Не удалось удалить лид');
-      setLeads(data.leads || []);
+      const nextLeads = data.leads || [];
+      setLeads(nextLeads);
+      syncDrafts(nextLeads);
       setMessage('Лид удалён.');
     } catch (error) {
       setLeads(previousLeads);
+      syncDrafts(previousLeads);
       setMessage(`Ошибка: ${error.message}`);
     }
   }
@@ -125,12 +193,13 @@ export default function AdminLeads({ auth }) {
   const filteredLeads = useMemo(() => {
     const text = query.trim().toLowerCase();
     return leads.filter((lead) => {
-      const matchesStatus = statusFilter === 'all' || (lead.status || 'new') === statusFilter;
-      const haystack = `${lead.contact} ${lead.object} ${lead.area} ${lead.frequency} ${lead.details} ${lead.managerComment}`.toLowerCase();
+      const draft = drafts[lead.id] || createLeadDraft(lead);
+      const matchesStatus = statusFilter === 'all' || draft.status === statusFilter;
+      const haystack = `${lead.contact} ${lead.object} ${lead.area} ${lead.frequency} ${lead.details} ${draft.managerComment}`.toLowerCase();
       const matchesQuery = !text || haystack.includes(text);
       return matchesStatus && matchesQuery;
     });
-  }, [leads, query, statusFilter]);
+  }, [leads, drafts, query, statusFilter]);
 
   return (
     <section className="editor-section leads-section">
@@ -167,54 +236,63 @@ export default function AdminLeads({ auth }) {
       {message && <div className={`admin-status ${message.startsWith('Ошибка') ? 'error' : ''}`}>{message}</div>}
 
       <div className="leads-list">
-        {filteredLeads.map((lead) => (
-          <article className="lead-card" key={lead.id}>
-            <div className="lead-card-head">
-              <div>
-                <span className={`lead-status lead-status-${lead.status || 'new'}`}>{statusLabels[lead.status || 'new'] || lead.status}</span>
-                <h3>{lead.contact}</h3>
-                <p>{leadSummary(lead)}</p>
+        {filteredLeads.map((lead) => {
+          const draft = drafts[lead.id] || createLeadDraft(lead);
+          const changed = isDraftChanged(lead);
+          const phone = normalizePhone(lead.contact);
+          const digits = normalizeDigits(lead.contact);
+
+          return (
+            <article className="lead-card" key={lead.id}>
+              <div className="lead-card-head">
+                <div>
+                  <span className={`lead-status lead-status-${draft.status}`}>{statusLabels[draft.status] || draft.status}</span>
+                  <h3>{lead.contact}</h3>
+                  <p>{leadSummary(lead)}</p>
+                </div>
+                <div className="lead-date">
+                  <span>Создан</span>
+                  <b>{formatDate(lead.createdAt)}</b>
+                </div>
               </div>
-              <div className="lead-date">
-                <span>Создан</span>
-                <b>{formatDate(lead.createdAt)}</b>
+
+              <div className="lead-details-grid">
+                <div><span>Объект</span><b>{lead.object || '—'}</b></div>
+                <div><span>Площадь</span><b>{lead.area || '—'}</b></div>
+                <div><span>Частота</span><b>{lead.frequency || '—'}</b></div>
+                <div><span>Источник</span><b>{lead.source || 'site'}</b></div>
               </div>
-            </div>
 
-            <div className="lead-details-grid">
-              <div><span>Объект</span><b>{lead.object || '—'}</b></div>
-              <div><span>Площадь</span><b>{lead.area || '—'}</b></div>
-              <div><span>Частота</span><b>{lead.frequency || '—'}</b></div>
-              <div><span>Источник</span><b>{lead.source || 'site'}</b></div>
-            </div>
+              {lead.details && <div className="lead-text"><span>Что важно клиенту</span><p>{lead.details}</p></div>}
 
-            {lead.details && <div className="lead-text"><span>Что важно клиенту</span><p>{lead.details}</p></div>}
+              <div className="lead-controls">
+                <label className="admin-field">
+                  <span>Статус</span>
+                  <select value={draft.status} onChange={(event) => updateDraft(lead.id, { status: event.target.value })}>
+                    {statusOptions.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
+                  </select>
+                </label>
+                <label className="admin-field">
+                  <span>Следующий контакт</span>
+                  <input type="datetime-local" value={draft.nextContactAt} onChange={(event) => updateDraft(lead.id, { nextContactAt: event.target.value })} />
+                </label>
+              </div>
 
-            <div className="lead-controls">
               <label className="admin-field">
-                <span>Статус</span>
-                <select value={lead.status || 'new'} onChange={(event) => updateLead(lead.id, { status: event.target.value })}>
-                  {statusOptions.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
-                </select>
+                <span>Комментарий менеджера</span>
+                <textarea rows="3" value={draft.managerComment} onChange={(event) => updateDraft(lead.id, { managerComment: event.target.value })} placeholder="Что обсудили, что предложить, когда вернуться..." />
               </label>
-              <label className="admin-field">
-                <span>Следующий контакт</span>
-                <input type="datetime-local" value={lead.nextContactAt || ''} onChange={(event) => updateLead(lead.id, { nextContactAt: event.target.value })} />
-              </label>
-            </div>
 
-            <label className="admin-field">
-              <span>Комментарий менеджера</span>
-              <textarea rows="3" value={lead.managerComment || ''} onChange={(event) => updateLead(lead.id, { managerComment: event.target.value })} placeholder="Что обсудили, что предложить, когда вернуться..." />
-            </label>
-
-            <div className="lead-actions">
-              <a className="admin-link" href={`tel:${String(lead.contact || '').replace(/[^+\d]/g, '')}`}>Позвонить</a>
-              <a className="admin-link secondary-link" href={`https://wa.me/${String(lead.contact || '').replace(/[^\d]/g, '')}`} target="_blank" rel="noreferrer">WhatsApp</a>
-              <button type="button" className="danger" onClick={() => deleteLead(lead.id)}>Удалить</button>
-            </div>
-          </article>
-        ))}
+              <div className="lead-actions">
+                <button type="button" onClick={() => saveLead(lead)} disabled={!changed || savingId === lead.id}>{savingId === lead.id ? 'Сохраняем...' : changed ? 'Сохранить лид' : 'Сохранено'}</button>
+                <a className="admin-link" href={phone ? `tel:${phone}` : '#'}>Позвонить</a>
+                <a className="admin-link secondary-link" href={digits ? `https://wa.me/${digits}` : '#'} target="_blank" rel="noreferrer">WhatsApp</a>
+                <a className="admin-link secondary-link" href={telegramHref(lead.contact)} target="_blank" rel="noreferrer">Telegram</a>
+                <button type="button" className="danger" onClick={() => deleteLead(lead.id)}>Удалить</button>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       {!filteredLeads.length && <div className="admin-status">По выбранным условиям лидов нет.</div>}
