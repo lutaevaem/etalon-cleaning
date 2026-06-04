@@ -39,7 +39,7 @@ function imageStyle(imageUrl) {
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [status, setStatus] = useState('Заявка отправляется на backend API.');
+  const [status, setStatus] = useState('Оставьте заявку — мы свяжемся с вами и подберём подходящий формат ухода.');
   const [content, setContent] = useState(defaultContent);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function App() {
       setStatus('Спасибо. Заявка принята — мы свяжемся с вами для подбора формата обслуживания.');
       form.reset();
     } catch (error) {
-      setStatus('Не удалось отправить заявку. Проверьте, запущен ли backend, или напишите нам в мессенджер.');
+      setStatus('Заявку не удалось отправить. Пожалуйста, попробуйте ещё раз или напишите нам в мессенджер.');
     }
   }
 
