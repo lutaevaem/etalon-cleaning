@@ -21,6 +21,7 @@ function normalizeLead(body = {}) {
     contact,
     source: String(body.source || 'site').trim(),
     status: 'new',
+    priority: 'normal',
     managerComment: '',
     nextContactAt: '',
     createdAt: new Date().toISOString(),
@@ -38,6 +39,7 @@ function normalizeLeadRecord(lead = {}) {
     contact: lead.contact || '',
     source: lead.source || 'site',
     status: lead.status || 'new',
+    priority: lead.priority || 'normal',
     managerComment: lead.managerComment || '',
     nextContactAt: lead.nextContactAt || '',
     createdAt: lead.createdAt || new Date().toISOString(),
@@ -83,7 +85,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'PATCH') {
       requireAdmin(req);
-      const { id, status, managerComment, nextContactAt } = req.body || {};
+      const { id, status, priority, managerComment, nextContactAt } = req.body || {};
 
       if (!id) {
         const error = new Error('Lead id is required');
@@ -103,12 +105,13 @@ export default async function handler(req, res) {
       leads[index] = {
         ...leads[index],
         ...(status !== undefined ? { status: String(status) } : {}),
+        ...(priority !== undefined ? { priority: String(priority) } : {}),
         ...(managerComment !== undefined ? { managerComment: String(managerComment) } : {}),
         ...(nextContactAt !== undefined ? { nextContactAt: String(nextContactAt) } : {}),
         updatedAt: new Date().toISOString()
       };
 
-      const savedLeads = await writeLeads(leads, 'Update lead status from admin');
+      const savedLeads = await writeLeads(leads, 'Update lead from admin');
 
       sendJson(res, 200, {
         ok: true,
