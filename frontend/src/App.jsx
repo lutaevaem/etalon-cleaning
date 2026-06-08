@@ -39,7 +39,7 @@ function imageStyle(imageUrl) {
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [status, setStatus] = useState('Оставьте заявку — мы свяжемся с вами и подберём подходящий формат ухода.');
+  const [status, setStatus] = useState('Оставьте заявку — мы свяжемся с вами в течение 30 минут и предложим подходящий формат обслуживания.');
   const [content, setContent] = useState(defaultContent);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function App() {
 
       if (!response.ok) throw new Error('Request failed');
 
-      setStatus('Спасибо. Заявка принята — мы свяжемся с вами для подбора формата обслуживания.');
+      setStatus('Спасибо. Заявка принята — менеджер свяжется с вами в течение 30 минут.');
       form.reset();
     } catch (error) {
       setStatus('Заявку не удалось отправить. Пожалуйста, попробуйте ещё раз или напишите нам в мессенджер.');
@@ -215,10 +215,10 @@ export default function App() {
           <div className="quiz-card">
             <div className="quiz-copy"><p className="eyebrow">{content.quiz.eyebrow}</p><h2>{content.quiz.title}</h2><p>{content.quiz.text}</p></div>
             <form className="quiz-form" onSubmit={handleSubmit}>
-              <label>Что нужно обслуживать?<select name="object" required><option value="">Выберите вариант</option><option>Квартира</option><option>Дом</option><option>Апартаменты</option></select></label>
-              <label>Площадь пространства<select name="area" required><option value="">Выберите площадь</option><option>До 60 м²</option><option>60–100 м²</option><option>100–200 м²</option><option>Более 200 м²</option></select></label>
-              <label>Как часто нужен уход?<select name="frequency" required><option value="">Выберите частоту</option><option>1 раз в неделю</option><option>2 раза в неделю</option><option>Несколько раз в месяц</option><option>Хочу обсудить</option></select></label>
-              <label>Что особенно важно?<textarea name="details" rows="3" placeholder="Кухня, санузлы, пыль, порядок, дети, животные, дорогие материалы..." /></label>
+              <label>Тип помещения<select name="object" required><option value="">Выберите вариант</option><option>Квартира</option><option>Дом</option><option>Апартаменты</option><option>Офис</option></select></label>
+              <label>Площадь помещения<select name="area"><option value="">Можно не указывать</option><option>До 60 м²</option><option>60–100 м²</option><option>100–200 м²</option><option>Более 200 м²</option><option>Хочу обсудить</option></select></label>
+              <label>Как часто нужен уход?<select name="frequency" required><option value="">Выберите частоту</option><option>Разовая уборка</option><option>Ежедневно</option><option>1 раз в неделю</option><option>2 раза в неделю</option><option>Периодически</option><option>Хочу обсудить</option></select></label>
+              <label>Дополнительная информация<textarea name="details" rows="3" placeholder="Пожелания, зоны внимания, ограничения по средствам, удобное время, особенности помещения..." /></label>
               <label>Телефон или мессенджер<input type="text" name="contact" placeholder="+7..." required /></label>
               <button className="btn primary full" type="submit">{content.quiz.button}</button>
               <p className="form-note">{status}</p>
