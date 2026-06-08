@@ -24,7 +24,8 @@ function mergeContent(remoteContent) {
     faq: { ...defaultContent.faq, ...remoteContent.faq },
     quiz: { ...defaultContent.quiz, ...remoteContent.quiz },
     final: { ...defaultContent.final, ...remoteContent.final },
-    footer: { ...defaultContent.footer, ...remoteContent.footer }
+    footer: { ...defaultContent.footer, ...remoteContent.footer },
+    legal: { ...(defaultContent.legal || {}), ...(remoteContent.legal || {}) }
   };
 }
 
@@ -35,6 +36,10 @@ function imageStyle(imageUrl) {
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
+}
+
+function hasLegalInfo(legal = {}) {
+  return Boolean(legal.companyName || legal.inn || legal.ogrn || legal.address || legal.email || legal.privacyUrl || legal.policyUrl);
 }
 
 export default function App() {
@@ -232,8 +237,24 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <div><strong>{content.brand}</strong><p>{content.footer.text}</p></div>
-        <div className="footer-links"><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div>
+        <div className="footer-main">
+          <div><strong>{content.brand}</strong><p>{content.footer.text}</p></div>
+          <div className="footer-links"><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div>
+        </div>
+        {hasLegalInfo(content.legal) && (
+          <div className="footer-legal">
+            <strong>{content.legal.title || 'Юридическая информация'}</strong>
+            {content.legal.companyName && <span>{content.legal.companyName}</span>}
+            {content.legal.inn && <span>ИНН: {content.legal.inn}</span>}
+            {content.legal.ogrn && <span>ОГРНИП/ОГРН: {content.legal.ogrn}</span>}
+            {content.legal.address && <span>Адрес: {content.legal.address}</span>}
+            {content.legal.email && <a href={`mailto:${content.legal.email}`}>{content.legal.email}</a>}
+            <div className="footer-policy-links">
+              {content.legal.privacyUrl && <a href={content.legal.privacyUrl}>Политика конфиденциальности</a>}
+              {content.legal.policyUrl && <a href={content.legal.policyUrl}>Пользовательское соглашение</a>}
+            </div>
+          </div>
+        )}
       </footer>
     </>
   );
