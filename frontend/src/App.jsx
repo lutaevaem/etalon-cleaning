@@ -42,10 +42,14 @@ function hasLegalInfo(legal = {}) {
   return Boolean(legal.companyName || legal.inn || legal.ogrn || legal.address || legal.email || legal.privacyUrl || legal.policyUrl || legal.consentUrl);
 }
 
+const checkboxLabelStyle = { display: 'grid', gridTemplateColumns: '18px 1fr', gap: '10px', alignItems: 'start', fontWeight: 500, fontSize: '13px', color: '#706a61' };
+const checkboxInputStyle = { width: '18px', height: '18px', marginTop: '3px', accentColor: '#6f5948' };
+
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [status, setStatus] = useState('Оставьте заявку — мы свяжемся с вами в течение 30 минут и предложим подходящий формат обслуживания.');
   const [content, setContent] = useState(defaultContent);
+  const [showCookieNotice, setShowCookieNotice] = useState(false);
 
   useEffect(() => {
     async function loadContent() {
@@ -59,7 +63,23 @@ export default function App() {
     }
 
     loadContent();
+
+    try {
+      setShowCookieNotice(localStorage.getItem('cookieConsent') !== 'accepted');
+    } catch (error) {
+      setShowCookieNotice(true);
+    }
   }, []);
+
+  function acceptCookies() {
+    try {
+      localStorage.setItem('cookieConsent', 'accepted');
+    } catch (error) {
+      // ignore storage errors
+    }
+
+    setShowCookieNotice(false);
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -127,7 +147,8 @@ export default function App() {
           <label>Как часто нужен уход?<select name="frequency" required><option value="">Выберите частоту</option><option>Разовая уборка</option><option>Ежедневно</option><option>1 раз в неделю</option><option>2 раза в неделю</option><option>Периодически</option><option>Хочу обсудить</option></select></label>
           <label>Дополнительная информация<textarea name="details" rows="3" placeholder="Пожелания, зоны внимания, ограничения по средствам, удобное время, особенности помещения..." /></label>
           <label>Телефон или мессенджер<input type="text" name="contact" placeholder="+7..." required /></label>
-          <label className="consent-checkbox"><input type="checkbox" name="personalDataConsent" required /><span>Я соглашаюсь с <a href="/consent.html" target="_blank" rel="noreferrer">обработкой персональных данных</a>, принимаю <a href="/privacy.html" target="_blank" rel="noreferrer">Политику защиты и обработки персональных данных</a> и ознакомлен(а) с <a href="/offer.html" target="_blank" rel="noreferrer">условиями оказания услуг</a>.</span></label>
+          <label className="consent-checkbox" style={checkboxLabelStyle}><input type="checkbox" name="personalDataConsent" required style={checkboxInputStyle} /><span>Я соглашаюсь с <a href="/consent.html" target="_blank" rel="noreferrer">обработкой персональных данных</a>, принимаю <a href="/privacy.html" target="_blank" rel="noreferrer">Политику защиты и обработки персональных данных</a> и ознакомлен(а) с <a href="/offer.html" target="_blank" rel="noreferrer">условиями оказания услуг</a>.</span></label>
+          <label className="consent-checkbox" style={checkboxLabelStyle}><input type="checkbox" name="marketingConsent" value="yes" style={checkboxInputStyle} /><span>Согласен(на) получать сервисные и маркетинговые сообщения о клининговых услугах, акциях и специальных предложениях. Можно отказаться в любой момент. <a href="/marketing-consent.html" target="_blank" rel="noreferrer">Подробнее</a>.</span></label>
           <button className="btn primary full" type="submit">{content.quiz.button}</button>
           <p className="form-note">{status}</p>
         </form></div></section>
@@ -135,7 +156,9 @@ export default function App() {
         <section className="section final"><h2>{content.final.title}</h2><p>{content.final.text}</p><a className="btn primary" href="#quiz">{content.final.cta}</a><span>{content.final.note}</span></section>
       </main>
 
-      <footer className="footer"><div className="footer-main"><div><strong>{content.brand}</strong><p>{content.footer.text}</p></div><div className="footer-links"><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div></div>{hasLegalInfo(content.legal) && <div className="footer-legal"><strong>{content.legal.title || 'Юридическая информация'}</strong>{content.legal.companyName && <span>{content.legal.companyName}</span>}{content.legal.inn && <span>ИНН: {content.legal.inn}</span>}{content.legal.ogrn && <span>ОГРНИП/ОГРН: {content.legal.ogrn}</span>}{content.legal.address && <span>Адрес: {content.legal.address}</span>}{content.legal.email && <a href={`mailto:${content.legal.email}`}>{content.legal.email}</a>}<div className="footer-policy-links"><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent.html">Согласие на обработку персональных данных</a><a href="/offer.html">Условия оказания услуг</a></div></div>}</footer>
+      <footer className="footer"><div className="footer-main"><div><strong>{content.brand}</strong><p>{content.footer.text}</p></div><div className="footer-links"><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div></div>{hasLegalInfo(content.legal) && <div className="footer-legal"><strong>{content.legal.title || 'Юридическая информация'}</strong>{content.legal.companyName && <span>{content.legal.companyName}</span>}{content.legal.inn && <span>ИНН: {content.legal.inn}</span>}{content.legal.ogrn && <span>ОГРНИП/ОГРН: {content.legal.ogrn}</span>}{content.legal.address && <span>Адрес: {content.legal.address}</span>}{content.legal.email && <a href={`mailto:${content.legal.email}`}>{content.legal.email}</a>}<div className="footer-policy-links"><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent.html">Согласие на обработку персональных данных</a><a href="/offer.html">Условия оказания услуг</a><a href="/marketing-consent.html">Согласие на рекламные сообщения</a></div></div>}</footer>
+
+      {showCookieNotice && <div style={{ position: 'fixed', left: '16px', right: '16px', bottom: '16px', zIndex: 100, maxWidth: '980px', margin: '0 auto', padding: '18px', borderRadius: '24px', background: '#fff', border: '1px solid #e6dfd4', boxShadow: '0 24px 80px rgba(68,55,43,.16)', display: 'grid', gap: '12px' }}><p style={{ margin: 0, color: '#706a61', fontSize: '14px' }}>Сайт использует cookie-файлы и технические данные, чтобы обеспечить работу сайта, улучшать сервис и анализировать обращения. Подробнее — в <a href="/privacy.html" target="_blank" rel="noreferrer">Политике защиты и обработки персональных данных</a>.</p><button className="btn primary" type="button" onClick={acceptCookies} style={{ justifySelf: 'start' }}>Понятно</button></div>}
     </>
   );
 }
