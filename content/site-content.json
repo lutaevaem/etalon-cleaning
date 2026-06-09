@@ -242,7 +242,10 @@
     "photos": [
       {
         "label": "Команда",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780995519550-chatgpt-image-9-июн-2026-г-15-58-38-b8917dc6.png",
+        "storagePath": "frontend/public/uploads/1780995519550-chatgpt-image-9-июн-2026-г-15-58-38-b8917dc6.png",
+        "publicPath": "/uploads/1780995519550-chatgpt-image-9-июн-2026-г-15-58-38-b8917dc6.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_58_38.png"
       },
       {
         "label": "Процесс работы",
@@ -381,5 +384,5 @@
     "privacyUrl": "/privacy.html",
     "consentUrl": "/consent.html"
   },
-  "updatedAt": "2026-06-09T08:53:37.369Z"
+  "updatedAt": "2026-06-09T08:59:57.668Z"
 }
