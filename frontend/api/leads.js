@@ -2,6 +2,11 @@ import crypto from 'crypto';
 import { readGithubJson, writeGithubJson, requireAdmin, sendError, sendJson } from './_github.js';
 
 const LEADS_PATH = process.env.GITHUB_LEADS_PATH || 'content/leads.json';
+const LEADS_STORAGE = process.env.LEADS_STORAGE || 'safe';
+
+function isGithubLeadStorageEnabled() {
+  return LEADS_STORAGE === 'github';
+}
 
 function normalizeLead(body = {}) {
   const contact = String(body.contact || '').trim();
@@ -48,11 +53,13 @@ function normalizeLeadRecord(lead = {}) {
 }
 
 async function readLeads() {
+  if (!isGithubLeadStorageEnabled()) return [];
   const leads = await readGithubJson(LEADS_PATH, []);
   return Array.isArray(leads) ? leads.map(normalizeLeadRecord) : [];
 }
 
 async function writeLeads(leads, message = 'Update leads from admin') {
+  if (!isGithubLeadStorageEnabled()) return leads.map(normalizeLeadRecord);
   await writeGithubJson(LEADS_PATH, leads.map(normalizeLeadRecord), message);
   return leads.map(normalizeLeadRecord);
 }
@@ -64,6 +71,7 @@ export default async function handler(req, res) {
       const leads = await readLeads();
       sendJson(res, 200, {
         ok: true,
+        storage: isGithubLeadStorageEnabled() ? 'github' : 'safe',
         leads: leads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       });
       return;
@@ -71,20 +79,30 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       const lead = normalizeLead(req.body);
-      const existingLeads = await readLeads();
-      existingLeads.push(lead);
 
-      await writeLeads(existingLeads, 'Add lead from Vercel site form');
+      if (isGithubLeadStorageEnabled()) {
+        const existingLeads = await readLeads();
+        existingLeads.push(lead);
+        await writeLeads(existingLeads, 'Add lead from Vercel site form');
+      }
 
       sendJson(res, 201, {
         ok: true,
-        leadId: lead.id
+        leadId: lead.id,
+        storage: isGithubLeadStorageEnabled() ? 'github' : 'safe'
       });
       return;
     }
 
     if (req.method === 'PATCH') {
       requireAdmin(req);
+
+      if (!isGithubLeadStorageEnabled()) {
+        const error = new Error('Lead storage is disabled. Enable LEADS_STORAGE=github only after making the repository private or connecting a secure CRM.');
+        error.statusCode = 403;
+        throw error;
+      }
+
       const { id, status, priority, managerComment, nextContactAt } = req.body || {};
 
       if (!id) {
@@ -123,6 +141,13 @@ export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
       requireAdmin(req);
+
+      if (!isGithubLeadStorageEnabled()) {
+        const error = new Error('Lead storage is disabled.');
+        error.statusCode = 403;
+        throw error;
+      }
+
       const { id } = req.body || {};
 
       if (!id) {
