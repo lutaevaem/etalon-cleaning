@@ -38,7 +38,10 @@
     "visual": {
       "main": {
         "label": "Комфортная среда",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994014426-chatgpt-image-9-июн-2026-г-14-52-21-bb1d62f7.png",
+        "storagePath": "frontend/public/uploads/1780994014426-chatgpt-image-9-июн-2026-г-14-52-21-bb1d62f7.png",
+        "publicPath": "/uploads/1780994014426-chatgpt-image-9-июн-2026-г-14-52-21-bb1d62f7.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 14_52_21.png"
       },
       "top": {
         "label": "Детали чистоты",
@@ -351,5 +354,5 @@
     "privacyUrl": "/privacy.html",
     "consentUrl": "/consent.html"
   },
-  "updatedAt": "2026-06-09T07:34:28.258Z"
+  "updatedAt": "2026-06-09T08:33:43.195Z"
 }
