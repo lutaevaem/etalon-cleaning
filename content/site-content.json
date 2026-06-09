@@ -256,10 +256,10 @@
       },
       {
         "label": "Детали ухода",
-        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994175943-chatgpt-image-9-июн-2026-г-15-14-35-b950825b.png",
-        "storagePath": "frontend/public/uploads/1780994175943-chatgpt-image-9-июн-2026-г-15-14-35-b950825b.png",
-        "publicPath": "/uploads/1780994175943-chatgpt-image-9-июн-2026-г-15-14-35-b950825b.png",
-        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_14_35.png"
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780996048045-chatgpt-image-9-июн-2026-г-16-07-55-0805ac60.png",
+        "storagePath": "frontend/public/uploads/1780996048045-chatgpt-image-9-июн-2026-г-16-07-55-0805ac60.png",
+        "publicPath": "/uploads/1780996048045-chatgpt-image-9-июн-2026-г-16-07-55-0805ac60.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 16_07_55.png"
       },
       {
         "label": "Ухоженный интерьер",
@@ -384,5 +384,5 @@
     "privacyUrl": "/privacy.html",
     "consentUrl": "/consent.html"
   },
-  "updatedAt": "2026-06-09T09:05:09.080Z"
+  "updatedAt": "2026-06-09T09:07:34.060Z"
 }
