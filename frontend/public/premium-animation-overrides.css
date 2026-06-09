@@ -1,118 +1,120 @@
 :root{
-  --bg:#f7f2ec;
-  --surface:#fffdf8;
-  --surface-2:#eee5dc;
-  --text:#2b170f;
-  --muted:#65574d;
-  --line:#d8cbc0;
-  --accent:#4a2b1f;
-  --accent-dark:#2b170f;
-  --accent-soft:#eee5dc;
-  --chocolate:#2b170f;
-  --chocolate-2:#3a2116;
-  --chocolate-soft:#5b3829;
-  --chocolate-silk:#432519;
-  --brown-line:rgba(43,23,15,.26);
+  --bg:#f2f0ec;
+  --surface:#fbfaf7;
+  --surface-2:#e8e3dc;
+  --text:#2f211b;
+  --muted:#6a625b;
+  --line:#d8d1c7;
+  --accent:#4a3026;
+  --accent-dark:#2f211b;
+  --accent-soft:#e8e3dc;
+  --chocolate:#2f211b;
+  --chocolate-2:#3b261e;
+  --chocolate-soft:#5a4035;
+  --chocolate-silk:#3b261e;
+  --brown-line:rgba(47,33,27,.18);
 }
 
 body{background:var(--bg)!important;color:var(--text)!important}
-.site-header{background:rgba(247,242,236,.96)!important;border-bottom-color:rgba(43,23,15,.28)!important}
+.site-header{background:rgba(242,240,236,.96)!important;border-bottom-color:rgba(47,33,27,.12)!important;box-shadow:0 10px 34px rgba(47,33,27,.045)!important}
 .logo,.logo-text,h1,h2,h3{color:var(--chocolate)!important}
-.eyebrow{color:var(--gold-dark)!important}
+.eyebrow{color:var(--chocolate-soft)!important}
 
 .header-cta,.btn.primary{background:var(--chocolate)!important;color:#fff!important}
 .btn.secondary{background:var(--surface)!important;color:var(--chocolate)!important}
 
-main > .section:nth-child(even){background:rgba(43,23,15,.028)}
+main > .section:nth-child(even){background:rgba(47,33,27,.018)}
 main > .section:nth-child(odd){background:transparent}
-.section.intro,.section.services,.section.people,.section.faq{background:#fffdf8!important}
-.section.audience,.section.formats,.section.gallery,.section.reviews{background:#f4eee8!important}
+.section.intro,.section.services,.section.people,.section.faq{background:#fbfaf7!important}
+.section.audience,.section.formats,.section.gallery,.section.reviews{background:#eeeae5!important}
 
 .card,.format-card,blockquote,details,.quiz-card{
   background:var(--surface)!important;
-  border-color:var(--brown-line)!important;
-  box-shadow:0 18px 54px rgba(43,23,15,.085)!important;
+  border-color:var(--line)!important;
+  box-shadow:0 16px 48px rgba(47,33,27,.06)!important;
 }
 
 .card::before,.format-card::before,blockquote::before,details::before{
   content:"";
   position:absolute;
-  left:24px;
-  right:24px;
+  left:26px;
+  right:26px;
   top:0;
-  height:4px;
+  height:2px;
   border-radius:0 0 999px 999px;
-  background:var(--chocolate-silk);
-  opacity:.9;
+  background:var(--chocolate);
+  opacity:.38;
 }
 
 .card:hover,.format-card:hover,blockquote:hover,details:hover{
-  border-color:rgba(212,175,55,.86)!important;
-  box-shadow:0 24px 74px rgba(43,23,15,.15)!important;
+  border-color:rgba(212,175,55,.55)!important;
+  box-shadow:0 24px 70px rgba(47,33,27,.10)!important;
 }
 
 .card h3,.format-card h3,summary,cite{color:var(--chocolate)!important}
 .card p,.format-card p,.step p,details p,blockquote p,.wide-text,.lead,.caption,.quiz-copy p,.people-grid p{color:var(--muted)!important}
 
 .compare-box.muted{
-  background:#fffdf8!important;
-  border-color:rgba(43,23,15,.22)!important;
+  background:#fbfaf7!important;
+  border-color:var(--line)!important;
 }
 
 .compare-box.accent,.value-card{
   background:var(--chocolate)!important;
   color:#fff!important;
+  border-color:rgba(212,175,55,.36)!important;
 }
 .compare-box.accent h3,.value-card h2{color:#fff!important}
 
 .format-card.featured{
-  background:var(--chocolate)!important;
-  border-color:var(--gold)!important;
-  box-shadow:0 24px 72px rgba(43,23,15,.22)!important;
+  background:var(--surface)!important;
+  border-color:rgba(212,175,55,.62)!important;
+  box-shadow:0 22px 64px rgba(47,33,27,.10)!important;
 }
-.format-card.featured h3,.format-card.featured p{color:#fff!important}
-.format-card.featured .best-for{color:rgba(255,255,255,.82)!important;border-top-color:rgba(212,175,55,.62)!important}
+.format-card.featured h3{color:var(--chocolate)!important}
+.format-card.featured p{color:var(--muted)!important}
+.format-card.featured .best-for{color:var(--muted)!important;border-top-color:var(--line)!important}
 
 .hero-points span{
-  background:#fffdf8!important;
-  color:var(--chocolate)!important;
-  border-color:rgba(43,23,15,.24)!important;
+  background:var(--surface)!important;
+  color:var(--chocolate-soft)!important;
+  border-color:var(--line)!important;
 }
 
-.step{border-top-color:rgba(43,23,15,.30)!important}
-.best-for{border-top-color:rgba(43,23,15,.24)!important}
+.step{border-top-color:rgba(47,33,27,.18)!important}
+.best-for{border-top-color:var(--line)!important}
 
 input,select,textarea{
-  border-color:rgba(43,23,15,.20)!important;
-  background:#fffdf8!important;
+  border-color:var(--line)!important;
+  background:#fff!important;
 }
 input:focus,select:focus,textarea:focus{
-  border-color:var(--gold)!important;
-  box-shadow:0 0 0 4px rgba(212,175,55,.15)!important;
+  border-color:rgba(212,175,55,.72)!important;
+  box-shadow:0 0 0 4px rgba(212,175,55,.10)!important;
 }
 
 .quiz-card{
-  background:#fffdf8!important;
-  border-color:rgba(43,23,15,.30)!important;
+  background:#fbfaf7!important;
+  border-color:rgba(47,33,27,.14)!important;
 }
 
 .final{
   background:var(--chocolate)!important;
   color:#fff!important;
-  border:1.5px solid var(--gold)!important;
+  border:1px solid rgba(212,175,55,.48)!important;
   border-radius:38px!important;
   padding:clamp(34px,5vw,66px)!important;
-  box-shadow:0 28px 86px rgba(43,23,15,.22)!important;
+  box-shadow:0 28px 82px rgba(47,33,27,.18)!important;
 }
 .final h2,.final p,.final span{color:#fff!important}
-.final p,.final span{opacity:.86}
+.final p,.final span{opacity:.84}
 
 .footer{
-  background:#e8ded4!important;
-  border-top-color:rgba(43,23,15,.32)!important;
+  background:#e4ded6!important;
+  border-top-color:rgba(47,33,27,.16)!important;
 }
 .footer strong,.footer-legal strong{color:var(--chocolate)!important}
-.footer-legal{border-top-color:rgba(43,23,15,.24)!important}
+.footer-legal{border-top-color:rgba(47,33,27,.14)!important}
 
 .logo-mark{animation-duration:8.4s,14.4s!important}
 .header-cta{animation-duration:8.4s!important}
