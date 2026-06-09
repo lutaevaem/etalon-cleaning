@@ -1,0 +1,15 @@
+.logo-mark{animation-duration:8.4s,14.4s!important}
+.header-cta{animation-duration:8.4s!important}
+.btn::after{animation-duration:7.8s!important}
+.btn.primary{animation-duration:8.4s!important}
+.btn.secondary{animation-duration:9.6s!important}
+.hero-points span{animation-duration:7s,10.2s!important}
+.visual-card,.photo-placeholder,.gallery-item{animation-duration:11.4s!important}
+.visual-card::after,.photo-placeholder::after,.gallery-item::after{animation-duration:14.4s!important}
+.visual-card.top{animation-duration:6s,11.4s!important}
+.visual-card.bottom{animation-duration:7s,11.4s!important}
+.compare-box.accent{animation-duration:9.6s!important}
+.format-card.featured{animation-duration:8.4s!important}
+.format-label,.step span{animation-duration:7.2s,14.4s!important}
+.value-card{animation-duration:9s!important}
+.quiz-card{animation-duration:10.2s!important}
