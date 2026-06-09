@@ -246,15 +246,24 @@
       },
       {
         "label": "Процесс работы",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994159462-chatgpt-image-9-июн-2026-г-14-59-53-30bfe6a2.png",
+        "storagePath": "frontend/public/uploads/1780994159462-chatgpt-image-9-июн-2026-г-14-59-53-30bfe6a2.png",
+        "publicPath": "/uploads/1780994159462-chatgpt-image-9-июн-2026-г-14-59-53-30bfe6a2.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 14_59_53.png"
       },
       {
         "label": "Детали ухода",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994175943-chatgpt-image-9-июн-2026-г-15-14-35-b950825b.png",
+        "storagePath": "frontend/public/uploads/1780994175943-chatgpt-image-9-июн-2026-г-15-14-35-b950825b.png",
+        "publicPath": "/uploads/1780994175943-chatgpt-image-9-июн-2026-г-15-14-35-b950825b.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_14_35.png"
       },
       {
         "label": "Ухоженный интерьер",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994186661-chatgpt-image-9-июн-2026-г-15-17-19-14d2c6ca.png",
+        "storagePath": "frontend/public/uploads/1780994186661-chatgpt-image-9-июн-2026-г-15-17-19-14d2c6ca.png",
+        "publicPath": "/uploads/1780994186661-chatgpt-image-9-июн-2026-г-15-17-19-14d2c6ca.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_17_19.png"
       }
     ]
   },
@@ -265,19 +274,31 @@
     "items": [
       {
         "label": "Чистая столешница",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994216689-chatgpt-image-9-июн-2026-г-14-55-24-1-dfdb1754.png",
+        "storagePath": "frontend/public/uploads/1780994216689-chatgpt-image-9-июн-2026-г-14-55-24-1-dfdb1754.png",
+        "publicPath": "/uploads/1780994216689-chatgpt-image-9-июн-2026-г-14-55-24-1-dfdb1754.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 14_55_24 (1).png"
       },
       {
         "label": "Блеск смесителя",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994226220-chatgpt-image-9-июн-2026-г-15-06-31-1-49636eac.png",
+        "storagePath": "frontend/public/uploads/1780994226220-chatgpt-image-9-июн-2026-г-15-06-31-1-49636eac.png",
+        "publicPath": "/uploads/1780994226220-chatgpt-image-9-июн-2026-г-15-06-31-1-49636eac.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_06_31 (1).png"
       },
       {
         "label": "Стекло без разводов",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994238079-chatgpt-image-9-июн-2026-г-15-14-35-e2803d06.png",
+        "storagePath": "frontend/public/uploads/1780994238079-chatgpt-image-9-июн-2026-г-15-14-35-e2803d06.png",
+        "publicPath": "/uploads/1780994238079-chatgpt-image-9-июн-2026-г-15-14-35-e2803d06.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_14_35.png"
       },
       {
         "label": "Ухоженное пространство",
-        "imageUrl": ""
+        "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1780994266987-chatgpt-image-9-июн-2026-г-15-06-32-2-1b290661.png",
+        "storagePath": "frontend/public/uploads/1780994266987-chatgpt-image-9-июн-2026-г-15-06-32-2-1b290661.png",
+        "publicPath": "/uploads/1780994266987-chatgpt-image-9-июн-2026-г-15-06-32-2-1b290661.png",
+        "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_06_32 (2).png"
       }
     ]
   },
@@ -360,5 +381,5 @@
     "privacyUrl": "/privacy.html",
     "consentUrl": "/consent.html"
   },
-  "updatedAt": "2026-06-09T08:34:53.758Z"
+  "updatedAt": "2026-06-09T08:37:54.525Z"
 }
