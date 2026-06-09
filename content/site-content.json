@@ -170,22 +170,30 @@
   },
   "footer": {
     "text": "Клининговый сервис для комфортного пространства.",
-    "phoneLabel": "+7 000 000-00-00",
-    "phoneHref": "tel:+70000000000",
+    "phoneLabel": "+7 983 137 0990",
+    "phoneHref": "tel:+79831370990",
     "whatsappLabel": "WhatsApp",
-    "whatsappUrl": "https://wa.me/70000000000",
+    "whatsappUrl": "https://wa.me/79831370990",
     "telegramLabel": "Telegram",
-    "telegramUrl": "https://t.me/"
+    "telegramUrl": "tg://resolve?phone=79831370990"
   },
   "legal": {
     "title": "Юридическая информация",
-    "companyName": "",
-    "inn": "",
-    "ogrn": "",
-    "address": "",
+    "companyName": "ИП Усольцев Александр Геннадьевич",
+    "inn": "540233113084",
+    "ogrn": "321547600062326",
+    "address": "630000, Новосибирская область, г. Новосибирск, улица Ногина, д. 10/5, кв./оф. 3",
+    "phoneLabel": "+7 983 137 0990",
+    "phoneHref": "tel:+79831370990",
+    "telegramUrl": "tg://resolve?phone=79831370990",
+    "responsiblePerson": "Усольцева Мария Леонидовна, руководитель проекта",
+    "bank": "ФИЛИАЛ «НОВОСИБИРСКИЙ» АО «АЛЬФА-БАНК»",
+    "checkingAccount": "40802810423220002006",
+    "bik": "045004774",
+    "correspondentAccount": "30101810600000000774",
     "email": "",
-    "privacyUrl": "",
-    "policyUrl": ""
+    "privacyUrl": "/privacy.html",
+    "consentUrl": "/consent.html"
   },
   "updatedAt": "2026-06-08T00:00:00.000Z"
 }
