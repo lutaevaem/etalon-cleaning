@@ -3,6 +3,33 @@ import { defaultContent } from './defaultContent.js';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
+const serviceTasks = [
+  {
+    title: 'Уборка квартир',
+    text: 'Разовая уборка или регулярный уход за квартирой в Новосибирске: кухня, санузлы, комнаты, прихожая и зоны ежедневного использования.'
+  },
+  {
+    title: 'Уборка домов',
+    text: 'Клининг домов и больших пространств: распределяем задачи между визитами, учитываем материалы, планировку и зоны повышенного внимания.'
+  },
+  {
+    title: 'Уборка офисов',
+    text: 'Поддерживаем аккуратное состояние офиса, переговорных, рабочих зон и клиентских пространств без лишней нагрузки на команду.'
+  },
+  {
+    title: 'Разовая уборка',
+    text: 'Помогаем быстро привести пространство в порядок перед гостями, после активной недели, переезда или события.'
+  },
+  {
+    title: 'Регулярная уборка',
+    text: 'Работаем по удобному графику: заранее знаем особенности пространства и поддерживаем стабильный уровень чистоты.'
+  },
+  {
+    title: 'Детальный уход',
+    text: 'Прорабатываем кухню, санузлы, стеклянные поверхности, смесители, зеркала, фасады и другие зоны, где особенно заметно качество.'
+  }
+];
+
 function mergeContent(remoteContent) {
   if (!remoteContent) return defaultContent;
 
@@ -132,6 +159,7 @@ export default function App() {
         <section className="section audience"><div className="section-heading"><p className="eyebrow">{content.audience.eyebrow}</p><h2>{content.audience.title}</h2></div><div className="cards four">{(content.audience.items || []).map((item) => <article className="card" key={item.title}><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
         <section className="section compare"><div className="section-heading"><p className="eyebrow">{content.compare.eyebrow}</p><h2>{content.compare.title}</h2></div><div className="compare-grid"><div className="compare-box muted"><h3>{content.compare.leftTitle}</h3><ul>{(content.compare.leftItems || []).map((item) => <li key={item}>{item}</li>)}</ul></div><div className="compare-box accent"><h3>{content.compare.rightTitle}</h3><ul>{(content.compare.rightItems || []).map((item) => <li key={item}>{item}</li>)}</ul></div></div></section>
         <section className="section services"><div className="section-heading"><p className="eyebrow">{content.services.eyebrow}</p><h2>{content.services.title}</h2></div><div className="cards three">{(content.services.items || []).map((item) => <article className="card" key={item.title}><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
+        <section className="section seo-tasks"><div className="section-heading"><p className="eyebrow">Клининговые услуги в Новосибирске</p><h2>С какими задачами помогаем</h2><p className="wide-text">Подбираем формат под помещение, график и задачу: от разовой уборки до регулярного ухода за квартирой, домом или офисом.</p></div><div className="cards three">{serviceTasks.map((item) => <article className="card" key={item.title}><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
         <section className="section formats" id="formats"><div className="section-heading"><p className="eyebrow">{content.formats.eyebrow}</p><h2>{content.formats.title}</h2></div><div className="pricing-grid">{(content.formats.items || []).map((item) => <article className={`format-card ${item.featured ? 'featured' : ''}`} key={item.title}><span className="format-label">{item.number}</span><h3>{item.title}</h3><p>{item.text}</p><p className="best-for">{item.bestFor}</p></article>)}</div><div className="center"><a className="btn primary" href="#quiz">{content.formats.cta}</a></div></section>
         <section className="section value"><div className="value-card"><div><p className="eyebrow">{content.value.eyebrow}</p><h2>{content.value.title}</h2></div><div><p>{content.value.text}</p><ul className="check-list">{(content.value.items || []).map((item) => <li key={item}>{item}</li>)}</ul></div></div></section>
         <section className="section process" id="process"><div className="section-heading"><p className="eyebrow">{content.process.eyebrow}</p><h2>{content.process.title}</h2></div><div className="steps">{(content.process.items || []).map((item, index) => <div className="step" key={item.title}><span>{index + 1}</span><h3>{item.title}</h3><p>{item.text}</p></div>)}</div></section>
