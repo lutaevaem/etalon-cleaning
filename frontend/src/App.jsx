@@ -72,6 +72,32 @@ function hasLegalInfo(legal = {}) {
 const checkboxLabelStyle = { display: 'grid', gridTemplateColumns: '18px 1fr', gap: '10px', alignItems: 'start', fontWeight: 500, fontSize: '13px', color: '#706a61' };
 const checkboxInputStyle = { width: '18px', height: '18px', marginTop: '3px', accentColor: '#6f5948' };
 
+const footerSeoStyle = {
+  paddingTop: '16px',
+  borderTop: '1px solid rgba(47,33,27,.14)',
+  color: '#6a625b',
+  fontSize: '13px'
+};
+
+const footerSeoSummaryStyle = {
+  cursor: 'pointer',
+  fontWeight: 800,
+  color: '#2f211b',
+  fontSize: '14px'
+};
+
+const footerSeoGridStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+  gap: '10px 18px',
+  marginTop: '12px'
+};
+
+const footerSeoItemStyle = {
+  display: 'grid',
+  gap: '4px'
+};
+
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [status, setStatus] = useState('Оставьте заявку — мы свяжемся с вами в течение 30 минут и предложим подходящий формат обслуживания.');
@@ -159,7 +185,6 @@ export default function App() {
         <section className="section audience"><div className="section-heading"><p className="eyebrow">{content.audience.eyebrow}</p><h2>{content.audience.title}</h2></div><div className="cards four">{(content.audience.items || []).map((item) => <article className="card" key={item.title}><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
         <section className="section compare"><div className="section-heading"><p className="eyebrow">{content.compare.eyebrow}</p><h2>{content.compare.title}</h2></div><div className="compare-grid"><div className="compare-box muted"><h3>{content.compare.leftTitle}</h3><ul>{(content.compare.leftItems || []).map((item) => <li key={item}>{item}</li>)}</ul></div><div className="compare-box accent"><h3>{content.compare.rightTitle}</h3><ul>{(content.compare.rightItems || []).map((item) => <li key={item}>{item}</li>)}</ul></div></div></section>
         <section className="section services"><div className="section-heading"><p className="eyebrow">{content.services.eyebrow}</p><h2>{content.services.title}</h2></div><div className="cards three">{(content.services.items || []).map((item) => <article className="card" key={item.title}><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
-        <section className="section seo-tasks"><div className="section-heading"><p className="eyebrow">Клининговые услуги в Новосибирске</p><h2>С какими задачами помогаем</h2><p className="wide-text">Подбираем формат под помещение, график и задачу: от разовой уборки до регулярного ухода за квартирой, домом или офисом.</p></div><div className="cards three">{serviceTasks.map((item) => <article className="card" key={item.title}><h3>{item.title}</h3><p>{item.text}</p></article>)}</div></section>
         <section className="section formats" id="formats"><div className="section-heading"><p className="eyebrow">{content.formats.eyebrow}</p><h2>{content.formats.title}</h2></div><div className="pricing-grid">{(content.formats.items || []).map((item) => <article className={`format-card ${item.featured ? 'featured' : ''}`} key={item.title}><span className="format-label">{item.number}</span><h3>{item.title}</h3><p>{item.text}</p><p className="best-for">{item.bestFor}</p></article>)}</div><div className="center"><a className="btn primary" href="#quiz">{content.formats.cta}</a></div></section>
         <section className="section value"><div className="value-card"><div><p className="eyebrow">{content.value.eyebrow}</p><h2>{content.value.title}</h2></div><div><p>{content.value.text}</p><ul className="check-list">{(content.value.items || []).map((item) => <li key={item}>{item}</li>)}</ul></div></div></section>
         <section className="section process" id="process"><div className="section-heading"><p className="eyebrow">{content.process.eyebrow}</p><h2>{content.process.title}</h2></div><div className="steps">{(content.process.items || []).map((item, index) => <div className="step" key={item.title}><span>{index + 1}</span><h3>{item.title}</h3><p>{item.text}</p></div>)}</div></section>
@@ -184,7 +209,14 @@ export default function App() {
         <section className="section final"><h2>{content.final.title}</h2><p>{content.final.text}</p><a className="btn primary" href="#quiz">{content.final.cta}</a><span>{content.final.note}</span></section>
       </main>
 
-      <footer className="footer"><div className="footer-main"><div><strong>{content.brand}</strong><p>{content.footer.text}</p></div><div className="footer-links"><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div></div>{hasLegalInfo(content.legal) && <div className="footer-legal"><strong>{content.legal.title || 'Юридическая информация'}</strong>{content.legal.companyName && <span>{content.legal.companyName}</span>}{content.legal.inn && <span>ИНН: {content.legal.inn}</span>}{content.legal.ogrn && <span>ОГРНИП/ОГРН: {content.legal.ogrn}</span>}{content.legal.address && <span>Адрес: {content.legal.address}</span>}{content.legal.email && <a href={`mailto:${content.legal.email}`}>{content.legal.email}</a>}<div className="footer-policy-links"><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent.html">Согласие на обработку персональных данных</a><a href="/offer.html">Условия оказания услуг</a><a href="/marketing-consent.html">Согласие на рекламные сообщения</a></div></div>}</footer>
+      <footer className="footer">
+        <div className="footer-main"><div><strong>{content.brand}</strong><p>{content.footer.text}</p></div><div className="footer-links"><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div></div>
+        <details style={footerSeoStyle}>
+          <summary style={footerSeoSummaryStyle}>Клининговые услуги в Новосибирске</summary>
+          <div style={footerSeoGridStyle}>{serviceTasks.map((item) => <div style={footerSeoItemStyle} key={item.title}><strong style={{ color: '#2f211b', fontSize: '13px' }}>{item.title}</strong><span>{item.text}</span></div>)}</div>
+        </details>
+        {hasLegalInfo(content.legal) && <div className="footer-legal"><strong>{content.legal.title || 'Юридическая информация'}</strong>{content.legal.companyName && <span>{content.legal.companyName}</span>}{content.legal.inn && <span>ИНН: {content.legal.inn}</span>}{content.legal.ogrn && <span>ОГРНИП/ОГРН: {content.legal.ogrn}</span>}{content.legal.address && <span>Адрес: {content.legal.address}</span>}{content.legal.email && <a href={`mailto:${content.legal.email}`}>{content.legal.email}</a>}<div className="footer-policy-links"><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent.html">Согласие на обработку персональных данных</a><a href="/offer.html">Условия оказания услуг</a><a href="/marketing-consent.html">Согласие на рекламные сообщения</a></div></div>}
+      </footer>
 
       {showCookieNotice && <div style={{ position: 'fixed', left: '16px', right: '16px', bottom: '16px', zIndex: 100, maxWidth: '980px', margin: '0 auto', padding: '18px', borderRadius: '24px', background: '#fff', border: '1px solid #e6dfd4', boxShadow: '0 24px 80px rgba(68,55,43,.16)', display: 'grid', gap: '12px' }}><p style={{ margin: 0, color: '#706a61', fontSize: '14px' }}>Сайт использует cookie-файлы и технические данные, чтобы обеспечить работу сайта, улучшать сервис и анализировать обращения. Подробнее — в <a href="/privacy.html" target="_blank" rel="noreferrer">Политике защиты и обработки персональных данных</a>.</p><button className="btn primary" type="button" onClick={acceptCookies} style={{ justifySelf: 'start' }}>Понятно</button></div>}
     </>
