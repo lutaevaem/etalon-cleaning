@@ -3,33 +3,6 @@ import { defaultContent } from './defaultContent.js';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
-const serviceTasks = [
-  {
-    title: 'Уборка квартир',
-    text: 'Разовая уборка или регулярный уход за квартирой в Новосибирске: кухня, санузлы, комнаты, прихожая и зоны ежедневного использования.'
-  },
-  {
-    title: 'Уборка домов',
-    text: 'Клининг домов и больших пространств: распределяем задачи между визитами, учитываем материалы, планировку и зоны повышенного внимания.'
-  },
-  {
-    title: 'Уборка офисов',
-    text: 'Поддерживаем аккуратное состояние офиса, переговорных, рабочих зон и клиентских пространств без лишней нагрузки на команду.'
-  },
-  {
-    title: 'Разовая уборка',
-    text: 'Помогаем быстро привести пространство в порядок перед гостями, после активной недели, переезда или события.'
-  },
-  {
-    title: 'Регулярная уборка',
-    text: 'Работаем по удобному графику: заранее знаем особенности пространства и поддерживаем стабильный уровень чистоты.'
-  },
-  {
-    title: 'Детальный уход',
-    text: 'Прорабатываем кухню, санузлы, стеклянные поверхности, смесители, зеркала, фасады и другие зоны, где особенно заметно качество.'
-  }
-];
-
 function mergeContent(remoteContent) {
   if (!remoteContent) return defaultContent;
 
@@ -71,32 +44,6 @@ function hasLegalInfo(legal = {}) {
 
 const checkboxLabelStyle = { display: 'grid', gridTemplateColumns: '18px 1fr', gap: '10px', alignItems: 'start', fontWeight: 500, fontSize: '13px', color: '#706a61' };
 const checkboxInputStyle = { width: '18px', height: '18px', marginTop: '3px', accentColor: '#6f5948' };
-
-const footerSeoStyle = {
-  paddingTop: '16px',
-  borderTop: '1px solid rgba(47,33,27,.14)',
-  color: '#6a625b',
-  fontSize: '13px'
-};
-
-const footerSeoSummaryStyle = {
-  cursor: 'pointer',
-  fontWeight: 800,
-  color: '#2f211b',
-  fontSize: '14px'
-};
-
-const footerSeoGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-  gap: '10px 18px',
-  marginTop: '12px'
-};
-
-const footerSeoItemStyle = {
-  display: 'grid',
-  gap: '4px'
-};
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -211,10 +158,6 @@ export default function App() {
 
       <footer className="footer">
         <div className="footer-main"><div><strong>{content.brand}</strong><p>{content.footer.text}</p></div><div className="footer-links"><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div></div>
-        <details style={footerSeoStyle}>
-          <summary style={footerSeoSummaryStyle}>Клининговые услуги в Новосибирске</summary>
-          <div style={footerSeoGridStyle}>{serviceTasks.map((item) => <div style={footerSeoItemStyle} key={item.title}><strong style={{ color: '#2f211b', fontSize: '13px' }}>{item.title}</strong><span>{item.text}</span></div>)}</div>
-        </details>
         {hasLegalInfo(content.legal) && <div className="footer-legal"><strong>{content.legal.title || 'Юридическая информация'}</strong>{content.legal.companyName && <span>{content.legal.companyName}</span>}{content.legal.inn && <span>ИНН: {content.legal.inn}</span>}{content.legal.ogrn && <span>ОГРНИП/ОГРН: {content.legal.ogrn}</span>}{content.legal.address && <span>Адрес: {content.legal.address}</span>}{content.legal.email && <a href={`mailto:${content.legal.email}`}>{content.legal.email}</a>}<div className="footer-policy-links"><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent.html">Согласие на обработку персональных данных</a><a href="/offer.html">Условия оказания услуг</a><a href="/marketing-consent.html">Согласие на рекламные сообщения</a></div></div>}
       </footer>
 
