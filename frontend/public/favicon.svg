@@ -1,32 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Эталон">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Эталон Клининнг">
   <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4a3026"/>
+      <stop offset="100%" stop-color="#22130f"/>
+    </linearGradient>
     <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#7f5b13"/>
-      <stop offset="18%" stop-color="#d4af37"/>
-      <stop offset="34%" stop-color="#fff1a8"/>
-      <stop offset="48%" stop-color="#b8860b"/>
-      <stop offset="62%" stop-color="#d4af37"/>
-      <stop offset="78%" stop-color="#fff7c8"/>
-      <stop offset="100%" stop-color="#8a6415"/>
-      <animateTransform attributeName="gradientTransform" type="rotate" from="0 .5 .5" to="360 .5 .5" dur="9s" repeatCount="indefinite"/>
+      <stop offset="0%" stop-color="#8a6415"/>
+      <stop offset="24%" stop-color="#d4af37"/>
+      <stop offset="48%" stop-color="#fff1a8"/>
+      <stop offset="72%" stop-color="#b8860b"/>
+      <stop offset="100%" stop-color="#d4af37"/>
     </linearGradient>
-    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
-      <stop offset="45%" stop-color="#ffffff" stop-opacity="0"/>
-      <stop offset="52%" stop-color="#ffffff" stop-opacity=".75"/>
-      <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-      <animate attributeName="x1" values="-1;1" dur="6s" repeatCount="indefinite"/>
-      <animate attributeName="x2" values="0;2" dur="6s" repeatCount="indefinite"/>
-    </linearGradient>
-    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#2f211b" flood-opacity=".22"/>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity=".28"/>
     </filter>
   </defs>
-  <rect width="64" height="64" rx="18" fill="#f2f0ec"/>
-  <circle cx="32" cy="32" r="23" fill="#2f211b"/>
-  <circle cx="32" cy="32" r="18" fill="url(#gold)" filter="url(#softShadow)"/>
-  <circle cx="32" cy="32" r="18" fill="url(#shine)" opacity=".55"/>
-  <path d="M22 35c8-1 14-6 18-16 3 11 0 19-8 25-4-2-8-5-10-9Z" fill="#fffdf8" opacity=".96"/>
-  <path d="M22 35c8-1 14-6 18-16 3 11 0 19-8 25-4-2-8-5-10-9Z" fill="none" stroke="#2f211b" stroke-opacity=".18" stroke-width="1"/>
+  <rect width="64" height="64" rx="16" fill="#f2f0ec"/>
+  <rect x="7" y="7" width="50" height="50" rx="14" fill="url(#bg)" filter="url(#shadow)"/>
+  <circle cx="32" cy="32" r="21" fill="none" stroke="url(#gold)" stroke-width="2.6"/>
+  <circle cx="32" cy="32" r="16.8" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1"/>
+  <text x="32" y="41" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="31" font-weight="700" fill="#fffdf8">Э</text>
+  <path d="M20 47c7 4 18 4 25 0" fill="none" stroke="url(#gold)" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
 </svg>
