@@ -1,0 +1,214 @@
+/* Responsive layout safety layer: prevents mobile overlaps without changing the visual concept. */
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-wrap: anywhere;
+}
+
+section,
+footer,
+.site-header,
+.hero,
+.hero-content,
+.hero-visual,
+.card,
+.format-card,
+.compare-box,
+.value-card,
+.quiz-card,
+.final,
+.footer,
+.footer-main,
+.footer-legal,
+.footer-links,
+.footer-policy-links {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hero,
+.value-card,
+.quiz-card,
+.people-grid,
+.compare-grid,
+.pricing-grid,
+.reviews-grid,
+.cards,
+.steps,
+.gallery-row,
+.photo-grid {
+  min-width: 0;
+}
+
+.btn,
+.header-cta,
+.footer a,
+.footer span,
+.footer p,
+.card p,
+.format-card p,
+.compare-box li,
+.step p,
+blockquote p,
+summary,
+label,
+input,
+select,
+textarea {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+@media (max-width: 720px) {
+  .section {
+    overflow: hidden;
+  }
+
+  .site-header {
+    width: 100%;
+    min-height: 58px;
+  }
+
+  .logo {
+    min-width: 0;
+    max-width: calc(100% - 58px);
+  }
+
+  .logo-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .main-nav.open {
+    max-height: calc(100svh - 76px);
+    overflow-y: auto;
+  }
+
+  .hero {
+    padding-top: 34px;
+  }
+
+  .hero-visual {
+    width: 100%;
+  }
+
+  .visual-card,
+  .photo-placeholder,
+  .gallery-item {
+    padding: 18px;
+    line-height: 1.2;
+  }
+
+  .visual-card span,
+  .photo-placeholder,
+  .gallery-item {
+    font-size: 14px;
+  }
+
+  .compare-box li,
+  .check-list li {
+    min-width: 0;
+  }
+
+  .final {
+    width: 100%;
+    padding: 30px 20px;
+  }
+
+  .final .btn {
+    margin-top: 6px;
+  }
+
+  .quiz-card {
+    width: 100%;
+  }
+
+  .quiz-form,
+  .quiz-form label {
+    min-width: 0;
+  }
+
+  .footer {
+    padding: 30px 18px;
+    gap: 18px;
+  }
+
+  .footer-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .footer-links,
+  .footer-policy-links {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .footer-links a,
+  .footer-policy-links a {
+    line-height: 1.35;
+  }
+
+  .footer-legal {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --container-x: 16px;
+  }
+
+  .section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  h1 {
+    font-size: clamp(31px, 9.2vw, 40px);
+  }
+
+  h2 {
+    font-size: clamp(25px, 7vw, 32px);
+  }
+
+  .lead,
+  .wide-text {
+    font-size: 16px;
+  }
+
+  .card,
+  .format-card,
+  .compare-box,
+  blockquote,
+  details,
+  .quiz-card,
+  .value-card {
+    padding: 20px;
+  }
+
+  .visual-card.large {
+    height: 286px;
+  }
+
+  .visual-card.small {
+    height: 124px;
+  }
+
+  .photo-placeholder,
+  .gallery-item {
+    min-height: 200px;
+  }
+}
