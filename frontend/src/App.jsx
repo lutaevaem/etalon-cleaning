@@ -109,7 +109,7 @@ export default function App() {
     <>
       <header className="site-header">
         <a className="logo" href="#top" aria-label="На главную"><span className="logo-mark" /><span className="logo-text">{content.brand}</span></a>
-        <nav className={`main-nav ${menuOpen ? 'open' : ''}`}>{(content.nav || []).map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}<a href="/prices.html">Цены</a></nav>
+        <nav className={`main-nav ${menuOpen ? 'open' : ''}`}>{(content.nav || []).map((item) => <a href={item.href} key={item.href}>{item.label}</a>)}<a href="/prices">Цены</a></nav>
         <a className="header-cta" href="#quiz">{content.headerCta}</a>
         <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Открыть меню">☰</button>
       </header>
@@ -157,7 +157,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <div className="footer-main"><div><strong>{content.brand}</strong><p>{content.footer.text}</p></div><div className="footer-links"><a href="/prices.html">Цены</a><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div></div>
+        <div className="footer-main"><div><strong>{content.brand}</strong><p>{content.footer.text}</p></div><div className="footer-links"><a href="/prices">Цены</a><a href={content.footer.phoneHref}>{content.footer.phoneLabel}</a><a href={content.footer.whatsappUrl}>{content.footer.whatsappLabel}</a><a href={content.footer.telegramUrl}>{content.footer.telegramLabel}</a></div></div>
         {hasLegalInfo(content.legal) && <div className="footer-legal"><strong>{content.legal.title || 'Юридическая информация'}</strong>{content.legal.companyName && <span>{content.legal.companyName}</span>}{content.legal.inn && <span>ИНН: {content.legal.inn}</span>}{content.legal.ogrn && <span>ОГРНИП/ОГРН: {content.legal.ogrn}</span>}{content.legal.address && <span>Адрес: {content.legal.address}</span>}{content.legal.email && <a href={`mailto:${content.legal.email}`}>{content.legal.email}</a>}<div className="footer-policy-links"><a href="/privacy.html">Политика обработки персональных данных</a><a href="/consent.html">Согласие на обработку персональных данных</a><a href="/offer.html">Условия оказания услуг</a><a href="/marketing-consent.html">Согласие на рекламные сообщения</a></div></div>}
       </footer>
 
