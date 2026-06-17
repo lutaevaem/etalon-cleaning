@@ -366,14 +366,14 @@
         "originalFileName": "ChatGPT Image 9 июн. 2026 г., 15_06_32 (2).png"
       },
       "top": {
-        "label": "детали ухода",
+        "label": "Детали ухода",
         "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1781681593501-chatgpt-image-9-июн-2026-г-16-07-43-f3600191.png",
         "storagePath": "frontend/public/uploads/1781681593501-chatgpt-image-9-июн-2026-г-16-07-43-f3600191.png",
         "publicPath": "/uploads/1781681593501-chatgpt-image-9-июн-2026-г-16-07-43-f3600191.png",
         "originalFileName": "ChatGPT Image 9 июн. 2026 г., 16_07_43.png"
       },
       "bottom": {
-        "label": "сервис без контроля",
+        "label": "Сервис без контроля",
         "imageUrl": "https://raw.githubusercontent.com/lutaevaem/etalon-cleaning/main/frontend/public/uploads/1781681603394-chatgpt-image-9-июн-2026-г-15-53-34-56234e50.png",
         "storagePath": "frontend/public/uploads/1781681603394-chatgpt-image-9-июн-2026-г-15-53-34-56234e50.png",
         "publicPath": "/uploads/1781681603394-chatgpt-image-9-июн-2026-г-15-53-34-56234e50.png",
@@ -533,5 +533,5 @@
     "privacyUrl": "/privacy.html",
     "consentUrl": "/consent.html"
   },
-  "updatedAt": "2026-06-17T07:34:44.428Z"
+  "updatedAt": "2026-06-17T07:35:16.274Z"
 }
