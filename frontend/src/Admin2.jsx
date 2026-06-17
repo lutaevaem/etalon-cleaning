@@ -11,6 +11,7 @@ const nav = [
   ['hero', 'Первый экран'],
   ['services', 'Услуги'],
   ['formats', 'Форматы'],
+  ['prices', 'Страница цен'],
   ['trust', 'Доверие'],
   ['process', 'Этапы'],
   ['media', 'Фото и визуал'],
@@ -32,14 +33,17 @@ function mergeContent(remoteContent) {
     hero: { ...defaultContent.hero, ...remoteContent.hero, visual: { ...defaultContent.hero.visual, ...(remoteContent.hero?.visual || {}) } },
     intro: { ...defaultContent.intro, ...remoteContent.intro },
     audience: { ...defaultContent.audience, ...remoteContent.audience },
+    compare: { ...defaultContent.compare, ...remoteContent.compare },
     services: { ...defaultContent.services, ...remoteContent.services },
     formats: { ...defaultContent.formats, ...remoteContent.formats },
+    prices: { ...defaultContent.prices, ...remoteContent.prices, visual: { ...defaultContent.prices.visual, ...(remoteContent.prices?.visual || {}) }, quiz: { ...defaultContent.prices.quiz, ...(remoteContent.prices?.quiz || {}) } },
     trust: { ...defaultContent.trust, ...remoteContent.trust },
     process: { ...defaultContent.process, ...remoteContent.process },
     people: { ...defaultContent.people, ...remoteContent.people },
     gallery: { ...defaultContent.gallery, ...remoteContent.gallery },
     reviews: { ...defaultContent.reviews, ...remoteContent.reviews },
     faq: { ...defaultContent.faq, ...remoteContent.faq },
+    quiz: { ...defaultContent.quiz, ...remoteContent.quiz },
     final: { ...defaultContent.final, ...remoteContent.final },
     footer: { ...defaultContent.footer, ...remoteContent.footer }
   };
@@ -53,11 +57,7 @@ function Field({ label, value, onChange, multiline = false, type = 'text', place
   return (
     <label className="admin-field">
       <span>{label}</span>
-      {multiline ? (
-        <textarea value={value || ''} rows="4" placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
-      ) : (
-        <input type={type} value={value || ''} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
-      )}
+      {multiline ? <textarea value={value || ''} rows="4" placeholder={placeholder} onChange={(event) => onChange(event.target.value)} /> : <input type={type} value={value || ''} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />}
     </label>
   );
 }
@@ -98,36 +98,18 @@ function ImageEditor({ title, location, item, onChange, auth, setStatus }) {
 
   async function uploadFile(file) {
     if (!file) return;
-
     try {
       setUploading(true);
       setStatus(`Загружаем фото: ${location}...`);
       const base64 = await readFileAsBase64(file);
-
       const response = await fetch(`${API_URL}/api/media`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${auth}`
-        },
-        body: JSON.stringify({
-          filename: file.name,
-          mimeType: file.type,
-          base64
-        })
+        headers: { 'Content-Type': 'application/json', Authorization: `Basic ${auth}` },
+        body: JSON.stringify({ filename: file.name, mimeType: file.type, base64 })
       });
-
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || 'Ошибка загрузки изображения');
-
-      onChange({
-        ...(item || {}),
-        imageUrl: data.media.url,
-        storagePath: data.media.path,
-        publicPath: data.media.publicPath,
-        originalFileName: data.media.filename
-      });
-
+      onChange({ ...(item || {}), imageUrl: data.media.url, storagePath: data.media.path, publicPath: data.media.publicPath, originalFileName: data.media.filename });
       setStatus(`Фото загружено. Место: ${location}. Файл: ${data.media.path}. Не забудьте нажать «Сохранить».`);
     } catch (error) {
       setStatus(`Ошибка загрузки фото: ${error.message}`);
@@ -138,26 +120,16 @@ function ImageEditor({ title, location, item, onChange, auth, setStatus }) {
 
   return (
     <div className="image-field image-field-advanced">
-      <div className="image-preview" style={item?.imageUrl ? { backgroundImage: `url(${item.imageUrl})` } : undefined}>
-        {!item?.imageUrl && <span>Фото</span>}
-      </div>
+      <div className="image-preview" style={item?.imageUrl ? { backgroundImage: `url(${item.imageUrl})` } : undefined}>{!item?.imageUrl && <span>Фото</span>}</div>
       <div className="image-inputs">
         <div className="media-location"><b>{title}</b><span>Где используется: {location}</span></div>
         <Field label="Подпись/текст на карточке" value={item?.label || ''} onChange={(value) => onChange({ ...(item || {}), label: value })} />
         <Field label="URL изображения" value={item?.imageUrl || ''} onChange={(value) => onChange({ ...(item || {}), imageUrl: value })} placeholder="Можно вставить ссылку вручную" />
         <div className="upload-row">
-          <label className="upload-button">
-            {uploading ? 'Загружаем...' : 'Загрузить фото'}
-            <input type="file" accept="image/*" disabled={uploading} onChange={(event) => uploadFile(event.target.files?.[0])} />
-          </label>
+          <label className="upload-button">{uploading ? 'Загружаем...' : 'Загрузить фото'}<input type="file" accept="image/*" disabled={uploading} onChange={(event) => uploadFile(event.target.files?.[0])} /></label>
           <small>до 6 МБ, jpg/png/webp. После загрузки нажмите «Сохранить».</small>
         </div>
-        {(item?.storagePath || item?.publicPath) && (
-          <div className="media-paths">
-            {item.storagePath && <p><b>Файл в GitHub:</b> {item.storagePath}</p>}
-            {item.publicPath && <p><b>Публичный путь:</b> {item.publicPath}</p>}
-          </div>
-        )}
+        {(item?.storagePath || item?.publicPath) && <div className="media-paths">{item.storagePath && <p><b>Файл в GitHub:</b> {item.storagePath}</p>}{item.publicPath && <p><b>Публичный путь:</b> {item.publicPath}</p>}</div>}
       </div>
     </div>
   );
@@ -166,15 +138,12 @@ function ImageEditor({ title, location, item, onChange, auth, setStatus }) {
 function ItemsEditor({ title, items, onChange, emptyItem, render }) {
   return (
     <div className="nested-editor">
-      <div className="nested-head">
-        <h3>{title}</h3>
-        <button type="button" onClick={() => onChange([...(items || []), clone(emptyItem)])}>+ Добавить</button>
-      </div>
+      <div className="nested-head"><h3>{title}</h3><button type="button" onClick={() => onChange([...(items || []), clone(emptyItem)])}>+ Добавить</button></div>
       <div className="admin-list">
         {(items || []).map((item, index) => (
           <div className="admin-list-item" key={index}>
             <div className="admin-list-item-head">
-              <strong>{item.title || item.question || item.author || item.label || `Элемент ${index + 1}`}</strong>
+              <strong>{item.title || item.question || item.author || item.label || item.meta || `Элемент ${index + 1}`}</strong>
               <div className="item-actions">
                 <button type="button" className="ghost" disabled={index === 0} onClick={() => { const next = [...items]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; onChange(next); }}>↑</button>
                 <button type="button" className="ghost" disabled={index === items.length - 1} onClick={() => { const next = [...items]; [next[index + 1], next[index]] = [next[index], next[index + 1]]; onChange(next); }}>↓</button>
@@ -190,18 +159,7 @@ function ItemsEditor({ title, items, onChange, emptyItem, render }) {
 }
 
 function Section({ title, description, children }) {
-  return (
-    <section className="editor-section">
-      <div className="section-title-row">
-        <div>
-          <p className="admin-eyebrow">Раздел сайта</p>
-          <h2>{title}</h2>
-          {description && <p>{description}</p>}
-        </div>
-      </div>
-      {children}
-    </section>
-  );
+  return <section className="editor-section"><div className="section-title-row"><div><p className="admin-eyebrow">Раздел сайта</p><h2>{title}</h2>{description && <p>{description}</p>}</div></div>{children}</section>;
 }
 
 export default function Admin2() {
@@ -220,7 +178,10 @@ export default function Admin2() {
       const copy = clone(current);
       const keys = path.split('.');
       let target = copy;
-      keys.slice(0, -1).forEach((key) => { target = target[key]; });
+      keys.slice(0, -1).forEach((key) => {
+        if (!target[key]) target[key] = {};
+        target = target[key];
+      });
       target[keys[keys.length - 1]] = value;
       return copy;
     });
@@ -273,9 +234,7 @@ export default function Admin2() {
   }
 
   function renderSection() {
-    if (active === 'leads') {
-      return <AdminLeads auth={auth} />;
-    }
+    if (active === 'leads') return <AdminLeads auth={auth} />;
 
     if (active === 'dashboard') {
       return <Section title="Обзор" description="Админка управляет текстами, карточками, отзывами, FAQ, изображениями и лидами с формы сайта."><div className="dashboard-grid"><div className="metric-card"><span>Статус</span><b>{isDirty ? 'Есть правки' : 'Без правок'}</b><p>{status}</p></div><div className="metric-card"><span>Сохранение</span><b>{updatedAt}</b><p>Контент хранится в content/site-content.json</p></div><div className="metric-card"><span>Лиды</span><b>В личном кабинете</b><p>Раздел «Лиды» показывает заявки с формы.</p></div></div></Section>;
@@ -291,6 +250,41 @@ export default function Admin2() {
 
     if (active === 'formats') {
       return <Section title="Форматы ухода" description="Пакеты и сценарии регулярного сервиса."><div className="admin-grid"><Field label="Надзаголовок" value={content.formats.eyebrow} onChange={(value) => update('formats.eyebrow', value)} /><Field label="Заголовок" value={content.formats.title} onChange={(value) => update('formats.title', value)} multiline /><Field label="CTA" value={content.formats.cta} onChange={(value) => update('formats.cta', value)} /></div><ItemsEditor title="Форматы" items={content.formats.items} onChange={(items) => update('formats.items', items)} emptyItem={{ number: '04', title: 'Новый формат', text: 'Описание', bestFor: 'Кому подходит' }} render={(item, setItem) => <div className="admin-grid"><Field label="Номер" value={item.number} onChange={(value) => setItem({ ...item, number: value })} /><Field label="Название" value={item.title} onChange={(value) => setItem({ ...item, title: value })} /><Field label="Описание" value={item.text} onChange={(value) => setItem({ ...item, text: value })} multiline /><Field label="Кому подходит" value={item.bestFor} onChange={(value) => setItem({ ...item, bestFor: value })} multiline /></div>} /></Section>;
+    }
+
+    if (active === 'prices') {
+      return <Section title="Страница цен" description="Отдельная посадочная /prices: тексты, прайс-карточки, форма и изображения первого экрана.">
+        <div className="admin-grid">
+          <Field label="Надзаголовок" value={content.prices.eyebrow} onChange={(value) => update('prices.eyebrow', value)} />
+          <Field label="Заголовок страницы" value={content.prices.title} onChange={(value) => update('prices.title', value)} multiline />
+          <Field label="Описание первого экрана" value={content.prices.lead} onChange={(value) => update('prices.lead', value)} multiline />
+          <Field label="Кнопка первого экрана" value={content.prices.primaryCta} onChange={(value) => update('prices.primaryCta', value)} />
+          <Field label="Примечание под кнопкой" value={content.prices.note} onChange={(value) => update('prices.note', value)} multiline />
+          <Field label="Надзаголовок прайса" value={content.prices.pricingEyebrow} onChange={(value) => update('prices.pricingEyebrow', value)} />
+          <Field label="Заголовок прайса" value={content.prices.pricingTitle} onChange={(value) => update('prices.pricingTitle', value)} />
+          <Field label="Описание прайса" value={content.prices.pricingLead} onChange={(value) => update('prices.pricingLead', value)} multiline />
+        </div>
+        <div className="media-grid">
+          <ImageEditor title="Большое фото страницы цен" location="/prices → первый экран → большое изображение" item={content.prices.visual.main} onChange={(value) => update('prices.visual.main', value)} auth={auth} setStatus={setStatus} />
+          <ImageEditor title="Верхняя малая карточка" location="/prices → первый экран → верхнее малое фото" item={content.prices.visual.top} onChange={(value) => update('prices.visual.top', value)} auth={auth} setStatus={setStatus} />
+          <ImageEditor title="Нижняя малая карточка" location="/prices → первый экран → нижнее малое фото" item={content.prices.visual.bottom} onChange={(value) => update('prices.visual.bottom', value)} auth={auth} setStatus={setStatus} />
+        </div>
+        <ItemsEditor title="Прайс-карточки" items={content.prices.priceCards} onChange={(items) => update('prices.priceCards', items)} emptyItem={{ meta: 'Новая категория', title: 'Новая услуга', price: 'от 0 ₽', text: 'Описание услуги', cta: 'Рассчитать этот формат' }} render={(item, setItem) => <div className="admin-grid"><Field label="Метка" value={item.meta} onChange={(value) => setItem({ ...item, meta: value })} /><Field label="Название" value={item.title} onChange={(value) => setItem({ ...item, title: value })} /><Field label="Цена" value={item.price} onChange={(value) => setItem({ ...item, price: value })} /><Field label="CTA" value={item.cta} onChange={(value) => setItem({ ...item, cta: value })} /><Field label="Описание" value={item.text} onChange={(value) => setItem({ ...item, text: value })} multiline /></div>} />
+        <div className="admin-grid">
+          <Field label="Блок факторов: надзаголовок" value={content.prices.factorsEyebrow} onChange={(value) => update('prices.factorsEyebrow', value)} />
+          <Field label="Блок факторов: заголовок" value={content.prices.factorsTitle} onChange={(value) => update('prices.factorsTitle', value)} />
+          <Field label="Дополнительные работы: надзаголовок" value={content.prices.extraEyebrow} onChange={(value) => update('prices.extraEyebrow', value)} />
+          <Field label="Дополнительные работы: заголовок" value={content.prices.extraTitle} onChange={(value) => update('prices.extraTitle', value)} />
+          <Field label="Форма: надзаголовок" value={content.prices.quiz.eyebrow} onChange={(value) => update('prices.quiz.eyebrow', value)} />
+          <Field label="Форма: заголовок" value={content.prices.quiz.title} onChange={(value) => update('prices.quiz.title', value)} multiline />
+          <Field label="Форма: текст" value={content.prices.quiz.text} onChange={(value) => update('prices.quiz.text', value)} multiline />
+          <Field label="Форма: кнопка" value={content.prices.quiz.button} onChange={(value) => update('prices.quiz.button', value)} />
+          <Field label="Форма: статус" value={content.prices.quiz.status} onChange={(value) => update('prices.quiz.status', value)} multiline />
+          <Field label="Финальный заголовок" value={content.prices.finalTitle} onChange={(value) => update('prices.finalTitle', value)} multiline />
+          <Field label="Финальный текст" value={content.prices.finalText} onChange={(value) => update('prices.finalText', value)} multiline />
+          <Field label="Финальная кнопка" value={content.prices.finalCta} onChange={(value) => update('prices.finalCta', value)} />
+        </div>
+      </Section>;
     }
 
     if (active === 'trust') {
@@ -326,15 +320,10 @@ export default function Admin2() {
     <main className="admin-shell">
       <aside className="admin-sidebar">
         <div className="sidebar-brand"><span /> <strong>{content.brand}</strong></div>
-        <nav className="sidebar-nav">
-          {nav.map(([id, label]) => <button type="button" className={active === id ? 'active' : ''} onClick={() => setActive(id)} key={id}><b>{label}</b><small>{id === 'leads' ? 'Заявки' : 'Редактировать'}</small></button>)}
-        </nav>
+        <nav className="sidebar-nav">{nav.map(([id, label]) => <button type="button" className={active === id ? 'active' : ''} onClick={() => setActive(id)} key={id}><b>{label}</b><small>{id === 'leads' ? 'Заявки' : 'Редактировать'}</small></button>)}</nav>
       </aside>
       <section className="admin-workspace">
-        <header className="workspace-header">
-          <div><p className="admin-eyebrow">Админка сайта</p><h1>Редактор контента «{content.brand}»</h1><p>Тексты, блоки, карточки, изображения и лиды с формы сайта.</p></div>
-          <div className="header-actions"><a className="admin-link" href="/" target="_blank" rel="noreferrer">Открыть сайт</a><button type="button" className="secondary" onClick={logout}>Выйти</button><button type="button" onClick={saveContent}>Сохранить</button></div>
-        </header>
+        <header className="workspace-header"><div><p className="admin-eyebrow">Админка сайта</p><h1>Редактор контента «{content.brand}»</h1><p>Тексты, блоки, карточки, изображения и лиды с формы сайта.</p></div><div className="header-actions"><a className="admin-link" href="/" target="_blank" rel="noreferrer">Открыть сайт</a><a className="admin-link" href="/prices" target="_blank" rel="noreferrer">Открыть цены</a><button type="button" className="secondary" onClick={logout}>Выйти</button><button type="button" onClick={saveContent}>Сохранить</button></div></header>
         <section className="admin-toolbar premium"><div className="toolbar-card"><span>Вход</span><b>Выполнен</b></div><div className="toolbar-card"><span>Состояние</span><b>{isDirty ? 'Есть правки' : 'Без правок'}</b></div><div className="toolbar-card"><span>Сохранение</span><b>{updatedAt}</b></div><button type="button" className="secondary" onClick={loadContent}>Обновить</button></section>
         {status && <div className={`admin-status ${status.startsWith('Ошибка') ? 'error' : ''}`}>{status}</div>}
         {renderSection()}
