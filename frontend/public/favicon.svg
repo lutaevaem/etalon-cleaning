@@ -7,10 +7,10 @@
     </radialGradient>
     <radialGradient id="goldCore" cx="28%" cy="22%" r="78%">
       <stop offset="0%" stop-color="#fff8c9"/>
-      <stop offset="24%" stop-color="#e9c657"/>
-      <stop offset="48%" stop-color="#b78516"/>
-      <stop offset="72%" stop-color="#f5dd86"/>
-      <stop offset="100%" stop-color="#8a6415"/>
+      <stop offset="23%" stop-color="#efcf62"/>
+      <stop offset="47%" stop-color="#b8860b"/>
+      <stop offset="72%" stop-color="#f7df88"/>
+      <stop offset="100%" stop-color="#7f5a12"/>
     </radialGradient>
     <linearGradient id="goldStroke" x1="8" y1="6" x2="58" y2="60" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#7b5510"/>
@@ -20,8 +20,13 @@
       <stop offset="72%" stop-color="#f2d777"/>
       <stop offset="100%" stop-color="#7f5a12"/>
     </linearGradient>
+    <linearGradient id="leaf" x1="20" y1="20" x2="45" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fbf8dc"/>
+      <stop offset="44%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#8a6415"/>
+    </linearGradient>
     <linearGradient id="shine" x1="14" y1="10" x2="44" y2="46" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity=".9"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".92"/>
       <stop offset="48%" stop-color="#ffffff" stop-opacity=".18"/>
       <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
@@ -32,10 +37,10 @@
   </defs>
   <rect width="64" height="64" rx="18" fill="url(#softBg)"/>
   <circle cx="32" cy="32" r="22.5" fill="url(#goldCore)" stroke="url(#goldStroke)" stroke-width="2.2" filter="url(#shadow)"/>
-  <circle cx="32" cy="32" r="17.3" fill="none" stroke="#fff7cf" stroke-width="1.2" opacity=".78"/>
+  <circle cx="32" cy="32" r="17.1" fill="none" stroke="#fff7cf" stroke-width="1.15" opacity=".74"/>
   <path d="M19 23.5c3.8-7 11.3-10.3 18.7-8.4 4.1 1.1 7.3 3.5 9.5 6.7" fill="none" stroke="url(#shine)" stroke-width="5.2" stroke-linecap="round" opacity=".72"/>
-  <path d="M21.8 34.3h19.4" fill="none" stroke="#2f211b" stroke-width="4.2" stroke-linecap="round"/>
-  <path d="M22 25.5h21.3" fill="none" stroke="#2f211b" stroke-width="4.2" stroke-linecap="round"/>
-  <path d="M22 25.5v20h22.2" fill="none" stroke="#2f211b" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M23.6 24.2c4.9-3.6 12.5-3.6 17.9.1" fill="none" stroke="#fff5c9" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>
+  <path d="M20.5 36.8c9.6-1.2 15.7-7.7 20.2-17.2 3.5 8.2 1.4 17.3-5.1 22.4-4.4 3.5-10.6 4.4-15.1 1.7 3.5-.5 7.3-2.5 10.5-5.5" fill="none" stroke="#2f211b" stroke-width="4.1" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M21.8 35.5c8.9-1.6 14.2-7.2 18.3-15.2" fill="none" stroke="url(#leaf)" stroke-width="2" stroke-linecap="round" opacity=".88"/>
+  <circle cx="42.8" cy="20.2" r="2.4" fill="#fff7c9" opacity=".8"/>
+  <circle cx="46" cy="26.5" r="1.25" fill="#fff7c9" opacity=".55"/>
 </svg>
