@@ -69,6 +69,22 @@
   <body>
     <div id="root"></div>
     <noscript><div><img src="https://mc.yandex.ru/watch/109777635" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <script>
+      (function(){
+        function addServiceRegulationLink(){
+          var footerLinks=document.querySelector('.footer-policy-links');
+          if(!footerLinks||footerLinks.querySelector('a[href="/service-regulation.html"]'))return;
+          var link=document.createElement('a');
+          link.href='/service-regulation.html';
+          link.textContent='Регламент обработки заявок';
+          var before=footerLinks.querySelector('a[href="/marketing-consent.html"]');
+          footerLinks.insertBefore(link,before||null);
+        }
+        var observer=new MutationObserver(addServiceRegulationLink);
+        observer.observe(document.body,{childList:true,subtree:true});
+        addServiceRegulationLink();
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
