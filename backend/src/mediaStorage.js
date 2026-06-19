@@ -18,12 +18,17 @@ export async function uploadMedia(file) {
 
   const ext = safeExt(file.originalname);
   const filename = `${Date.now()}-${crypto.randomUUID()}${ext}`;
-  const mediaPath = `${process.env.GITHUB_MEDIA_PATH || 'frontend/public/uploads'}/${filename}`;
+  const mediaRoot = process.env.GITHUB_MEDIA_PATH || 'frontend/public/uploads';
+  const mediaPath = `${mediaRoot}/${filename}`;
+  const publicPath = `/uploads/${filename}`;
   const result = await writeGithubFile(mediaPath, file.buffer, 'Upload media from admin');
 
   return {
     path: result.path,
-    url: result.url,
+    url: publicPath,
+    publicPath,
+    storagePath: result.path,
+    rawUrl: result.url,
     filename: file.originalname,
     mimetype: file.mimetype,
     size: file.size
