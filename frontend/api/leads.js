@@ -3,9 +3,16 @@ import { readGithubJson, writeGithubJson, requireAdmin, sendError, sendJson } fr
 
 const LEADS_PATH = process.env.GITHUB_LEADS_PATH || 'content/leads.json';
 const LEADS_STORAGE = process.env.LEADS_STORAGE || 'safe';
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '';
+const TELEGRAM_LEAD_MODE = process.env.TELEGRAM_LEAD_MODE || 'full';
 
 function isGithubLeadStorageEnabled() {
   return LEADS_STORAGE === 'github';
+}
+
+function isTelegramEnabled() {
+  return Boolean(TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID);
 }
 
 function normalizeLead(body = {}) {
@@ -52,6 +59,83 @@ function normalizeLeadRecord(lead = {}) {
   };
 }
 
+function formatDate(value) {
+  try {
+    return new Intl.DateTimeFormat('ru-RU', {
+      timeZone: 'Asia/Novosibirsk',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(value));
+  } catch (error) {
+    return value;
+  }
+}
+
+function getSourceLabel(source = '') {
+  const labels = {
+    'site-quiz': 'Главная страница',
+    'prices-page': 'Страница цен',
+    site: 'Сайт'
+  };
+
+  return labels[source] || source || 'Сайт';
+}
+
+function buildTelegramLeadMessage(lead) {
+  const source = getSourceLabel(lead.source);
+  const createdAt = formatDate(lead.createdAt);
+
+  if (TELEGRAM_LEAD_MODE === 'minimal') {
+    return [
+      '🧼 Новая заявка с сайта Эталон Клининнг',
+      '',
+      `Источник: ${source}`,
+      `Время: ${createdAt}`,
+      '',
+      'Откройте админку, чтобы посмотреть детали.'
+    ].join('\n');
+  }
+
+  return [
+    '🧼 Новая заявка с сайта Эталон Клининнг',
+    '',
+    `Источник: ${source}`,
+    `Тип помещения: ${lead.object || 'не указано'}`,
+    `Площадь: ${lead.area || 'не указано'}`,
+    `Формат: ${lead.frequency || 'не указано'}`,
+    `Комментарий: ${lead.details || 'не указано'}`,
+    `Контакт: ${lead.contact}`,
+    `Время: ${createdAt}`
+  ].join('\n');
+}
+
+async function sendTelegramLeadNotification(lead) {
+  if (!isTelegramEnabled()) {
+    return { enabled: false, ok: false };
+  }
+
+  const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text: buildTelegramLeadMessage(lead),
+      disable_web_page_preview: true
+    })
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok || !data?.ok) {
+    throw new Error(data?.description || 'Telegram notification failed');
+  }
+
+  return { enabled: true, ok: true };
+}
+
 async function readLeads() {
   if (!isGithubLeadStorageEnabled()) return [];
   const leads = await readGithubJson(LEADS_PATH, []);
@@ -72,6 +156,7 @@ export default async function handler(req, res) {
       sendJson(res, 200, {
         ok: true,
         storage: isGithubLeadStorageEnabled() ? 'github' : 'safe',
+        telegram: { enabled: isTelegramEnabled(), mode: TELEGRAM_LEAD_MODE },
         leads: leads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       });
       return;
@@ -86,10 +171,18 @@ export default async function handler(req, res) {
         await writeLeads(existingLeads, 'Add lead from Vercel site form');
       }
 
+      let telegram = { enabled: isTelegramEnabled(), ok: false };
+      try {
+        telegram = await sendTelegramLeadNotification(lead);
+      } catch (error) {
+        console.error('Telegram lead notification failed:', error.message);
+      }
+
       sendJson(res, 201, {
         ok: true,
         leadId: lead.id,
-        storage: isGithubLeadStorageEnabled() ? 'github' : 'safe'
+        storage: isGithubLeadStorageEnabled() ? 'github' : 'safe',
+        telegram
       });
       return;
     }
