@@ -28,6 +28,7 @@ const upload = multer({
 const port = process.env.PORT || 4000;
 const frontendOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
 const allowedOrigins = frontendOrigin.split(',').map((origin) => origin.trim()).filter(Boolean);
+const rawPublicPrefix = /^https:\/\/raw\.githubusercontent\.com\/[^/]+\/[^/]+\/[^/]+\/frontend\/public/;
 
 app.use(cors({
   origin(origin, callback) {
@@ -49,7 +50,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/content', async (req, res) => {
-  const content = await readSiteContent();
+  const content = normalizePublicMediaUrls(await readSiteContent());
   res.json({
     ok: true,
     content
@@ -69,7 +70,7 @@ app.put('/api/content', async (req, res) => {
 
     res.json({
       ok: true,
-      content: savedContent
+      content: normalizePublicMediaUrls(savedContent)
     });
   } catch (error) {
     res.status(error.statusCode || 400).json({
@@ -114,6 +115,34 @@ app.post('/api/leads', async (req, res) => {
     });
   }
 });
+
+function normalizePublicMediaUrls(value) {
+  if (Array.isArray(value)) {
+    return value.map(normalizePublicMediaUrls);
+  }
+
+  if (value && typeof value === 'object') {
+    const normalized = {};
+
+    for (const [key, item] of Object.entries(value)) {
+      normalized[key] = normalizePublicMediaUrls(item);
+    }
+
+    if (normalized.publicPath && typeof normalized.imageUrl === 'string') {
+      normalized.imageUrl = normalized.publicPath;
+    } else if (typeof normalized.imageUrl === 'string') {
+      normalized.imageUrl = normalized.imageUrl.replace(rawPublicPrefix, '');
+    }
+
+    return normalized;
+  }
+
+  if (typeof value === 'string') {
+    return value.replace(rawPublicPrefix, '');
+  }
+
+  return value;
+}
 
 function normalizeLead(body) {
   const contact = String(body.contact || '').trim();
